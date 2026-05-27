@@ -31,6 +31,7 @@ function Header() {
   const links = [
     { label: "Services", href: "#services" },
     { label: "Discovery Tests", href: "#discovery" },
+    { label: "Scholarships", href: "#scholarships" },
     { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
   ];
@@ -503,6 +504,7 @@ function Footer() {
           <ul className="mt-4 space-y-2 text-sm">
             <li><a href="#services" className="hover:text-gold">Services</a></li>
             <li><a href="#discovery" className="hover:text-gold">Discovery Tests</a></li>
+            <li><a href="#scholarships" className="hover:text-gold">Scholarships</a></li>
             <li><a href="#about" className="hover:text-gold">About</a></li>
             <li><a href="#contact" className="hover:text-gold">Contact</a></li>
           </ul>

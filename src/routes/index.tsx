@@ -87,7 +87,7 @@ function Hero() {
         <div className="md:col-span-7">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium text-white/90 backdrop-blur-sm">
             <Award className="w-3.5 h-3.5 text-gold" />
-            National Award–Recognized Counseling
+            Trusted by Parents | Driven by Science
           </div>
           <h1 className="mt-6 font-display text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.05]">
             Your Compass to a <span className="text-gradient-gold italic">Successful</span> Future.

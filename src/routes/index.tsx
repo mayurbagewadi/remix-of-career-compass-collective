@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import counselorImg from "@/assets/counselor.jpg";
+import futureReadyImg from "@/assets/future-ready.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -243,22 +244,30 @@ function Discovery() {
 function Community() {
   return (
     <section className="py-24 bg-surface">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="relative overflow-hidden rounded-3xl bg-primary text-white p-10 md:p-14 shadow-elegant">
-          <div className="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-gold-gradient opacity-20 blur-3xl" />
-          <div className="relative grid md:grid-cols-[1fr_auto] gap-8 items-center">
-            <div>
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="relative overflow-hidden rounded-3xl bg-primary text-white shadow-elegant grid md:grid-cols-2">
+          <div className="relative">
+            <img
+              src={futureReadyImg}
+              alt="Career Craft 360 Future Ready Students Community infographic"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div className="relative p-10 md:p-12">
+            <div className="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-gold-gradient opacity-20 blur-3xl" />
+            <div className="relative">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium">
                 <Users className="w-3.5 h-3.5 text-gold" /> Free Community
               </div>
               <h2 className="mt-5 text-3xl md:text-4xl font-display font-semibold">Join the Inner Circle.</h2>
-              <p className="mt-4 text-white/80 max-w-xl leading-relaxed">
-                The <span className="text-gold font-medium">Career Craft Community</span> on WhatsApp — real-time admission alerts, internships, new-age courses and expert tips. Free, always.
+              <p className="mt-4 text-white/80 leading-relaxed">
+                Real-time admission alerts, internships, new-age courses and expert tips — free, always.
               </p>
+              <a href="#contact" className="mt-8 inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+                <MessageCircle className="w-5 h-5" /> Join on WhatsApp
+              </a>
             </div>
-            <a href="#contact" className="inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-7 py-4 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform whitespace-nowrap">
-              <MessageCircle className="w-5 h-5" /> Join on WhatsApp
-            </a>
           </div>
         </div>
       </div>
@@ -352,9 +361,9 @@ function Contact() {
           <h2 className="mt-3 text-4xl md:text-5xl font-display font-semibold leading-tight">Let’s craft your trajectory.</h2>
           <p className="mt-5 text-white/80 text-lg max-w-md">Share a few details and our team will reach out within 24 hours to schedule your discovery call.</p>
           <div className="mt-10 space-y-4 text-white/80">
-            <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-gold" /> +91 — Available on request</div>
-            <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /> hello@careercraft360.com</div>
-            <div className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /> India · Serving Global Indians worldwide</div>
+            <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-gold" /><span>+91 — Available on request</span></div>
+            <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /><span>career.craftyouth@gmail.com</span></div>
+            <div className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /><span>India · Serving Global Indians worldwide</span></div>
           </div>
           <div className="mt-8 flex items-center gap-3">
             <a href={FB} aria-label="Facebook" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Facebook className="w-4 h-4" /></a>

@@ -4,7 +4,7 @@ import {
   Compass, Globe2, GraduationCap, Plane, Brain, Users, Award,
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
   Scale, Briefcase, Palette, Stethoscope, Cog, MessageCircle, Sparkles,
-  Phone, Mail, MapPin,
+  Phone, Mail, MapPin, BookOpen, Wallet, Trophy,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import counselorImg from "@/assets/counselor.png";
@@ -244,9 +244,9 @@ function Discovery() {
 function Community() {
   return (
     <section className="py-24 bg-surface">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="relative overflow-hidden rounded-3xl bg-primary text-white shadow-elegant grid md:grid-cols-2">
-          <div className="relative">
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="relative overflow-hidden rounded-3xl bg-primary text-white shadow-elegant">
+          <div className="relative w-full aspect-[16/9] md:aspect-[21/9]">
             <img
               src={futureReadyImg}
               alt="Career Craft 360 Future Ready Students Community infographic"
@@ -254,9 +254,9 @@ function Community() {
               loading="lazy"
             />
           </div>
-          <div className="relative p-10 md:p-12">
+          <div className="relative p-10 md:p-12 text-center">
             <div className="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-gold-gradient opacity-20 blur-3xl" />
-            <div className="relative">
+            <div className="relative max-w-2xl mx-auto">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium">
                 <Users className="w-3.5 h-3.5 text-gold" /> Free Community
               </div>
@@ -268,6 +268,58 @@ function Community() {
                 <MessageCircle className="w-5 h-5" /> Join on WhatsApp
               </a>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Scholarships() {
+  const highlights = [
+    { icon: Wallet, title: "Central & State Schemes", desc: "Pre-matric, post-matric, merit-cum-means and minority scholarships — all in one verified portal." },
+    { icon: Trophy, title: "Merit & Need Based", desc: "From top-rankers to first-generation learners — funding pathways for every profile and every stream." },
+    { icon: BookOpen, title: "Apply with Confidence", desc: "We help you decode eligibility, deadlines and documentation so no deserving student is left behind." },
+  ];
+  return (
+    <section id="scholarships" className="py-24 md:py-32 bg-background">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid lg:grid-cols-12 gap-12 items-start">
+          <div className="lg:col-span-5">
+            <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Scholarships for All</div>
+            <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
+              Funding the <span className="italic text-gradient-gold">dreams</span> of every learner.
+            </h2>
+            <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
+              Talent should never be limited by tuition. Explore India’s National Scholarship Portal — a single gateway to hundreds of central & state government scholarships for school, college and professional courses.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href="https://scholarships.gov.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
+              >
+                Explore Scholarships <ArrowRight className="w-4 h-4" />
+              </a>
+              <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
+                Get Guidance
+              </a>
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">Opens scholarships.gov.in — Government of India National Scholarship Portal.</p>
+          </div>
+          <div className="lg:col-span-7 grid sm:grid-cols-1 gap-5">
+            {highlights.map(h => (
+              <div key={h.title} className="flex items-start gap-5 bg-card border border-border rounded-2xl p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow">
+                <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary shrink-0">
+                  <h.icon className="w-6 h-6 text-gold" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-primary">{h.title}</h3>
+                  <p className="mt-2 text-muted-foreground leading-relaxed">{h.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -483,6 +535,7 @@ function Index() {
       <Services />
       <Discovery />
       <Community />
+      <Scholarships />
       <About />
       <Contact />
       <Footer />

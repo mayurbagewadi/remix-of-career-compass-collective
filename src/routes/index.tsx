@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 });
 
 const FB = "https://www.facebook.com/profile.php?id=61576293282096";
-const IG = "https://instagram.com/career.craftyouth";
+const IG = "https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=zkjqm3r";
 const LI = "https://www.linkedin.com/in/rupali-rathore";
 
 function Header() {

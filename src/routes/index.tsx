@@ -7,7 +7,7 @@ import {
   Phone, Mail, MapPin,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
-import counselorImg from "@/assets/counselor.jpg";
+import counselorImg from "@/assets/counselor.png";
 import futureReadyImg from "@/assets/future-ready.jpg";
 
 export const Route = createFileRoute("/")({
@@ -304,8 +304,9 @@ function About() {
 
         <div className="mt-16 grid lg:grid-cols-2 gap-10">
           <div className="bg-surface border border-border rounded-3xl p-8 md:p-10 shadow-card">
-            <div className="aspect-[4/5] max-w-sm overflow-hidden rounded-2xl">
-              <img src={counselorImg} alt="Rupali Rathore, Lead Career Counselor" className="w-full h-full object-cover" loading="lazy" width={1024} height={1280} />
+            <div className="relative aspect-[4/5] max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-accent via-surface to-secondary">
+              <div className="absolute inset-0 bg-gold-gradient opacity-10" />
+              <img src={counselorImg} alt="Rupali Rathore, Lead Career Counselor" className="relative w-full h-full object-contain object-bottom" loading="lazy" />
             </div>
             <div className="mt-7">
               <h3 className="text-2xl font-display font-semibold text-primary">Rupali Rathore</h3>

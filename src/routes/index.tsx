@@ -4,7 +4,7 @@ import {
   Compass, Globe2, GraduationCap, Plane, Brain, Users, Award,
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
   Scale, Briefcase, Palette, Stethoscope, Cog, MessageCircle, Sparkles,
-  Phone, Mail, MapPin, BookOpen, Wallet, Trophy,
+  Phone, Mail, MapPin, BookOpen, Wallet, Trophy, Landmark, BadgeCheck,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import counselorImg from "@/assets/counselor.png";
@@ -36,7 +36,17 @@ function Header() {
     { label: "Contact", href: "#contact" },
   ];
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/85 border-b border-border">
+    <>
+      <div className="bg-primary text-white/95 text-[11px] md:text-xs font-medium tracking-wide text-center py-1.5 border-b border-white/10">
+        <div className="inline-flex items-center gap-1.5">
+          <Landmark className="w-3.5 h-3.5 text-gold" />
+          <span>Government of India Registered MSME</span>
+          <span className="mx-1 text-white/40">|</span>
+          <BadgeCheck className="w-3.5 h-3.5 text-gold" />
+          <span>Trusted by Parents | Driven by Science</span>
+        </div>
+      </div>
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/85 border-b border-border">
       <div className="mx-auto max-w-7xl px-6 h-18 flex items-center justify-between py-4">
         <a href="#" className="flex items-center gap-2.5">
           <span className="grid place-items-center w-10 h-10 rounded-lg bg-hero-gradient shadow-elegant">
@@ -74,6 +84,7 @@ function Header() {
         </div>
       )}
     </header>
+    </>
   );
 }
 

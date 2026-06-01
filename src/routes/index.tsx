@@ -4,7 +4,7 @@ import {
   Compass, Globe2, GraduationCap, Plane, Brain, Users, Award,
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
   Scale, Briefcase, Palette, Stethoscope, Cog, MessageCircle, Sparkles,
-  Phone, Mail, MapPin, BookOpen, Wallet, Trophy,
+  Phone, Mail, MapPin, BookOpen, Wallet, Trophy, Landmark, BadgeCheck,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import counselorImg from "@/assets/counselor.png";

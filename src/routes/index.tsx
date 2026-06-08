@@ -341,6 +341,67 @@ function Scholarships() {
   );
 }
 
+function Internships() {
+  const cards = [
+    {
+      icon: FileText,
+      title: "Research Paper Guidance",
+      desc: "End-to-end mentorship for publishing in reputed journals — topic selection, methodology, drafting, and peer-review navigation.",
+    },
+    {
+      icon: Lightbulb,
+      title: "Internship Placements",
+      desc: "Curated internship opportunities across STEM, management, and design — with resume reviews and interview prep.",
+    },
+    {
+      icon: ClipboardCheck,
+      title: "Project & Portfolio Building",
+      desc: "Structured support for capstone projects, startup pitches, and standout college application portfolios.",
+    },
+    {
+      icon: Award,
+      title: "Competition & Grant Prep",
+      desc: "Guidance for science fairs, hackathons, innovation challenges, and research grants that boost admission profiles.",
+    },
+  ];
+  return (
+    <section id="internships" className="py-24 md:py-32 bg-surface">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="max-w-3xl">
+          <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Internships & Research</div>
+          <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
+            Build proof, not just <span className="italic text-gradient-gold">potential</span>.
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Stand out in admissions with real-world experience. We help students secure internships, publish research, and craft portfolios that colleges actually notice.
+          </p>
+        </div>
+        <div className="mt-14 grid md:grid-cols-2 gap-6">
+          {cards.map((c) => (
+            <div key={c.title} className="group flex items-start gap-5 bg-card border border-border rounded-2xl p-7 shadow-card hover:shadow-elegant transition-shadow">
+              <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary shrink-0">
+                <c.icon className="w-6 h-6 text-gold" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-primary">{c.title}</h3>
+                <p className="mt-2 text-muted-foreground leading-relaxed">{c.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-12 flex flex-wrap gap-3">
+          <a href="#contact" className="inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+            Get Started <ArrowRight className="w-4 h-4" />
+          </a>
+          <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
+            Ask About Opportunities
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function About() {
   const experts = [
     {
@@ -551,6 +612,7 @@ function Index() {
       <Discovery />
       <Community />
       <Scholarships />
+      <Internships />
       <About />
       <Contact />
       <Footer />

@@ -525,6 +525,7 @@ function Contact() {
                     <option>Study Abroad</option>
                     <option>OCI / NRI Admissions</option>
                     <option>BBA / MBA / Law / Design</option>
+                    <option>Internship / Research Paper Support</option>
                   </select>
                 </div>
                 <div>
@@ -579,6 +580,7 @@ function Footer() {
             <li><a href="#services" className="hover:text-gold">Services</a></li>
             <li><a href="#discovery" className="hover:text-gold">Discovery Tests</a></li>
             <li><a href="#scholarships" className="hover:text-gold">Scholarships</a></li>
+            <li><a href="#internships" className="hover:text-gold">Internships</a></li>
             <li><a href="#about" className="hover:text-gold">About</a></li>
             <li><a href="#contact" className="hover:text-gold">Contact</a></li>
           </ul>

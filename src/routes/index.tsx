@@ -33,6 +33,7 @@ function Header() {
     { label: "Services", href: "#services" },
     { label: "Discovery Tests", href: "#discovery" },
     { label: "Scholarships", href: "#scholarships" },
+    { label: "Internships", href: "#internships" },
     { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
   ];

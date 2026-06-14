@@ -264,7 +264,7 @@ function Community() {
           <div className="relative w-full aspect-[16/9] md:aspect-[21/9]">
             <img
               src={futureReadyImg}
-              alt="Career Craft 360 Future Ready Students Community infographic"
+              alt="Career Craft Youth Future Ready Students Community infographic"
               className="w-full h-full object-cover"
               loading="lazy"
             />

@@ -482,7 +482,7 @@ function About() {
 function Testimonials() {
   const testimonials = [
     {
-      quote: "Career Craft 360 completely transformed how we approached our daughter's college applications. The psychometric test revealed strengths we never knew she had, and the admission strategy was spot-on.",
+      quote: "Career Craft Youth completely transformed how we approached our daughter's college applications. The psychometric test revealed strengths we never knew she had, and the admission strategy was spot-on.",
       name: "Ananya Sharma",
       role: "Parent of Grade 12 Student",
       rating: 5,

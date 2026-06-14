@@ -14,9 +14,9 @@ import futureReadyImg from "@/assets/future-ready.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Career Craft 360 — Your Compass to a Successful Future" },
+      { title: "Career Craft Youth — Your Compass to a Successful Future" },
       { name: "description", content: "Expert psychometric analysis and strategic admission guidance for students and Global Indians (OCI/NRI). Book your discovery call today." },
-      { property: "og:title", content: "Career Craft 360 — Your Compass to a Successful Future" },
+      { property: "og:title", content: "Career Craft Youth — Your Compass to a Successful Future" },
       { property: "og:description", content: "Personalized career counseling, study-abroad roadmaps, and admission strategy from a national award–recognized team." },
     ],
   }),

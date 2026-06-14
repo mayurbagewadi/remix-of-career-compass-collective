@@ -677,7 +677,7 @@ function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-6 py-6 text-xs text-white/55 flex flex-col md:flex-row gap-2 md:justify-between">
-          <div>© {new Date().getFullYear()} Career Craft 360. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} Career Craft Youth. All rights reserved.</div>
           <div>Crafted with empathy, clarity &amp; measurable results.</div>
         </div>
       </div>

@@ -14,9 +14,9 @@ import futureReadyImg from "@/assets/future-ready.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Career Craft 360 — Your Compass to a Successful Future" },
+      { title: "Career Craft Youth — Your Compass to a Successful Future" },
       { name: "description", content: "Expert psychometric analysis and strategic admission guidance for students and Global Indians (OCI/NRI). Book your discovery call today." },
-      { property: "og:title", content: "Career Craft 360 — Your Compass to a Successful Future" },
+      { property: "og:title", content: "Career Craft Youth — Your Compass to a Successful Future" },
       { property: "og:description", content: "Personalized career counseling, study-abroad roadmaps, and admission strategy from a national award–recognized team." },
     ],
   }),
@@ -56,7 +56,7 @@ function Header() {
             <Compass className="w-5 h-5 text-gold" />
           </span>
           <span className="font-display text-lg font-semibold tracking-tight text-primary">
-            Career Craft <span className="text-gradient-gold">360</span>
+            Career Craft <span className="text-gradient-gold">Youth</span>
           </span>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-foreground/80">
@@ -264,7 +264,7 @@ function Community() {
           <div className="relative w-full aspect-[16/9] md:aspect-[21/9]">
             <img
               src={futureReadyImg}
-              alt="Career Craft 360 Future Ready Students Community infographic"
+              alt="Career Craft Youth Future Ready Students Community infographic"
               className="w-full h-full object-cover"
               loading="lazy"
             />
@@ -465,7 +465,7 @@ function About() {
 
         <div className="mt-14 rounded-2xl border border-gold/30 bg-gradient-to-br from-accent to-surface p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-gold-deep">Why Career Craft 360?</div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-gold-deep">Why Career Craft Youth?</div>
             <p className="mt-2 text-lg text-primary max-w-2xl">
               By blending modern psychometric analysis with the collective wisdom of seasoned academic and corporate mentors, we ensure our students get a massive competitive edge.
             </p>
@@ -482,7 +482,7 @@ function About() {
 function Testimonials() {
   const testimonials = [
     {
-      quote: "Career Craft 360 completely transformed how we approached our daughter's college applications. The psychometric test revealed strengths we never knew she had, and the admission strategy was spot-on.",
+      quote: "Career Craft Youth completely transformed how we approached our daughter's college applications. The psychometric test revealed strengths we never knew she had, and the admission strategy was spot-on.",
       name: "Ananya Sharma",
       role: "Parent of Grade 12 Student",
       rating: 5,
@@ -642,7 +642,7 @@ function Footer() {
             <span className="grid place-items-center w-10 h-10 rounded-lg bg-white/10">
               <Compass className="w-5 h-5 text-gold" />
             </span>
-            <span className="font-display text-lg font-semibold text-white">Career Craft <span className="text-gradient-gold">360</span></span>
+            <span className="font-display text-lg font-semibold text-white">Career Craft <span className="text-gradient-gold">Youth</span></span>
           </div>
           <p className="mt-5 max-w-md text-sm text-white/65 leading-relaxed">
             Your compass to a successful future — personalized career counseling, admissions strategy, and a global Indian desk under one roof.
@@ -677,7 +677,7 @@ function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-6 py-6 text-xs text-white/55 flex flex-col md:flex-row gap-2 md:justify-between">
-          <div>© {new Date().getFullYear()} Career Craft 360. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} Career Craft Youth. All rights reserved.</div>
           <div>Crafted with empathy, clarity &amp; measurable results.</div>
         </div>
       </div>

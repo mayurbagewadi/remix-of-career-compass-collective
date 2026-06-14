@@ -56,7 +56,7 @@ function Header() {
             <Compass className="w-5 h-5 text-gold" />
           </span>
           <span className="font-display text-lg font-semibold tracking-tight text-primary">
-            Career Craft <span className="text-gradient-gold">360</span>
+            Career Craft <span className="text-gradient-gold">Youth</span>
           </span>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-foreground/80">

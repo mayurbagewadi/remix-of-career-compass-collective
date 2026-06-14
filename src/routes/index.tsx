@@ -661,6 +661,7 @@ function Footer() {
             <li><a href="#scholarships" className="hover:text-gold">Scholarships</a></li>
             <li><a href="#internships" className="hover:text-gold">Internships</a></li>
             <li><a href="#about" className="hover:text-gold">About</a></li>
+            <li><a href="#testimonials" className="hover:text-gold">Testimonials</a></li>
             <li><a href="#contact" className="hover:text-gold">Contact</a></li>
           </ul>
         </div>

@@ -35,6 +35,7 @@ function Header() {
     { label: "Scholarships", href: "#scholarships" },
     { label: "Internships", href: "#internships" },
     { label: "About", href: "#about" },
+    { label: "Testimonials", href: "#testimonials" },
     { label: "Contact", href: "#contact" },
   ];
   return (

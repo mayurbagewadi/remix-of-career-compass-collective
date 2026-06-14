@@ -479,6 +479,84 @@ function About() {
   );
 }
 
+function Testimonials() {
+  const testimonials = [
+    {
+      quote: "Career Craft 360 completely transformed how we approached our daughter's college applications. The psychometric test revealed strengths we never knew she had, and the admission strategy was spot-on.",
+      name: "Ananya Sharma",
+      role: "Parent of Grade 12 Student",
+      rating: 5,
+    },
+    {
+      quote: "I was confused between engineering and design. The stream discovery session gave me crystal-clear clarity. Today I'm studying at my dream design school — all thanks to Rupali ma'am.",
+      name: "Rohan Mehta",
+      role: "Student, Class 11",
+      rating: 5,
+    },
+    {
+      quote: "As an NRI parent, finding trustworthy guidance for Indian university admissions was stressful. The Global Indian Desk made the entire process seamless and transparent.",
+      name: "Priya Nair",
+      role: "Parent of OCI Student",
+      rating: 5,
+    },
+    {
+      quote: "The internship placement support helped me land a research role at a top lab. My college application stood out because I had real published work — not just grades.",
+      name: "Aditya Kapoor",
+      role: "Student, Class 12",
+      rating: 5,
+    },
+    {
+      quote: "What impressed me most was the personalized attention. They didn't just hand us a list of colleges — they built a complete roadmap tailored to my son's personality and goals.",
+      name: "Vikram Reddy",
+      role: "Parent of Grade 10 Student",
+      rating: 5,
+    },
+    {
+      quote: "The scholarship guidance alone saved us lakhs in tuition. They walked us through every form, every deadline, and every eligibility check. Truly life-changing support.",
+      name: "Sunita Patel",
+      role: "Parent of Grade 11 Student",
+      rating: 5,
+    },
+  ];
+
+  return (
+    <section id="testimonials" className="py-24 md:py-32 bg-surface">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="max-w-3xl">
+          <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Testimonials</div>
+          <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
+            Voices of <span className="italic text-gradient-gold">trust</span> &amp; transformation.
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Real stories from parents and students whose futures we helped shape — one decision at a time.
+          </p>
+        </div>
+
+        <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {testimonials.map((t, i) => (
+            <div
+              key={i}
+              className="group bg-card border border-border rounded-2xl p-8 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-all duration-300 flex flex-col"
+            >
+              <div className="flex items-center gap-1 mb-5">
+                {Array.from({ length: t.rating }).map((_, r) => (
+                  <Star key={r} className="w-4 h-4 fill-gold text-gold" />
+                ))}
+              </div>
+              <Quote className="w-8 h-8 text-gold/40 mb-4" />
+              <p className="text-foreground/85 leading-relaxed flex-1">{t.quote}</p>
+              <div className="mt-6 pt-6 border-t border-border">
+                <div className="font-semibold text-primary">{t.name}</div>
+                <div className="text-sm text-muted-foreground">{t.role}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Contact() {
   const [submitted, setSubmitted] = useState(false);
   return (

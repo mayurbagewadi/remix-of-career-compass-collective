@@ -642,7 +642,7 @@ function Footer() {
             <span className="grid place-items-center w-10 h-10 rounded-lg bg-white/10">
               <Compass className="w-5 h-5 text-gold" />
             </span>
-            <span className="font-display text-lg font-semibold text-white">Career Craft <span className="text-gradient-gold">360</span></span>
+            <span className="font-display text-lg font-semibold text-white">Career Craft <span className="text-gradient-gold">Youth</span></span>
           </div>
           <p className="mt-5 max-w-md text-sm text-white/65 leading-relaxed">
             Your compass to a successful future — personalized career counseling, admissions strategy, and a global Indian desk under one roof.

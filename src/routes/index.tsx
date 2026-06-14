@@ -696,6 +696,7 @@ function Index() {
       <Scholarships />
       <Internships />
       <About />
+      <Testimonials />
       <Contact />
       <Footer />
     </main>

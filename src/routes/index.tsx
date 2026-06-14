@@ -465,7 +465,7 @@ function About() {
 
         <div className="mt-14 rounded-2xl border border-gold/30 bg-gradient-to-br from-accent to-surface p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-gold-deep">Why Career Craft 360?</div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-gold-deep">Why Career Craft Youth?</div>
             <p className="mt-2 text-lg text-primary max-w-2xl">
               By blending modern psychometric analysis with the collective wisdom of seasoned academic and corporate mentors, we ensure our students get a massive competitive edge.
             </p>

@@ -480,6 +480,25 @@ function About() {
 }
 
 function Testimonials() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  };
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardW = el.querySelector("div[data-card]")?.clientWidth ?? 380;
+    el.scrollBy({ left: dir === "left" ? -cardW - 24 : cardW + 24, behavior: "smooth" });
+    setTimeout(checkScroll, 350);
+  };
+
   const testimonials = [
     {
       quote: "Career Craft Youth completely transformed how we approached our daughter's college applications. The psychometric test revealed strengths we never knew she had, and the admission strategy was spot-on.",
@@ -522,21 +541,47 @@ function Testimonials() {
   return (
     <section id="testimonials" className="py-24 md:py-32 bg-surface">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="max-w-3xl">
-          <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Testimonials</div>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
-            Voices of <span className="italic text-gradient-gold">trust</span> &amp; transformation.
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Real stories from parents and students whose futures we helped shape — one decision at a time.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div className="max-w-3xl">
+            <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Testimonials</div>
+            <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
+              Voices of <span className="italic text-gradient-gold">trust</span> &amp; transformation.
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Real stories from parents and students whose futures we helped shape — one decision at a time.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => scroll("left")}
+              disabled={!canScrollLeft}
+              className="w-11 h-11 rounded-full border border-border bg-card flex items-center justify-center hover:bg-accent transition disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="w-5 h-5 text-primary" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              disabled={!canScrollRight}
+              className="w-11 h-11 rounded-full border border-border bg-card flex items-center justify-center hover:bg-accent transition disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="w-5 h-5 text-primary" />
+            </button>
+          </div>
         </div>
 
-        <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          ref={scrollRef}
+          onScroll={checkScroll}
+          className="mt-14 flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {testimonials.map((t, i) => (
             <div
               key={i}
-              className="group bg-card border border-border rounded-2xl p-8 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-all duration-300 flex flex-col"
+              data-card
+              className="group bg-card border border-border rounded-2xl p-8 shadow-card hover:shadow-elegant transition-all duration-300 flex flex-col min-w-[320px] md:min-w-[380px] max-w-[380px] snap-start"
             >
               <div className="flex items-center gap-1 mb-5">
                 {Array.from({ length: t.rating }).map((_, r) => (

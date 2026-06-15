@@ -5,7 +5,7 @@ import {
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
   Scale, Briefcase, Palette, Stethoscope, Cog, MessageCircle, Sparkles,
   Phone, Mail, MapPin, BookOpen, Wallet, Trophy, Landmark, BadgeCheck,
-  FileText, Lightbulb, ClipboardCheck, Quote, Star,
+  FileText, Lightbulb, ClipboardCheck, Quote, Star, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import counselorImg from "@/assets/counselor.png";

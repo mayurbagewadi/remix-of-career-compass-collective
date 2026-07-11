@@ -1,0 +1,63 @@
+# Career Craft Youth
+
+Career Craft Youth is an education and career guidance brand for students and Global Indian families.
+
+Canonical domain: https://careercraftyouth.in
+
+## Primary Purpose
+
+Help students and parents make better academic, career, and admission decisions through psychometric analysis, counselling, mentoring, and structured admissions support.
+
+## Short AI Summary
+
+Career Craft Youth provides psychometric career counselling, stream selection guidance, admission strategy, study abroad planning, scholarship guidance, internship support, and OCI/NRI admission guidance for students and parents.
+
+## Who It Serves
+
+Career Craft Youth serves students in grades 8 to 12, parents planning academic pathways, Indian students choosing professional streams, and Global Indian families seeking guidance for Indian and international admissions.
+
+## Core Services
+
+- Psychometric career counselling for students
+- Stream discovery for grades 8 to 12
+- Admission strategy for Indian and international colleges
+- Study abroad guidance
+- OCI, PIO, NRI, and CIWG admission guidance for Global Indian families
+- Scholarship discovery and application guidance
+- Internship and research opportunity support
+- Professional stream guidance for engineering, medical, law, management, design, and related fields
+
+## Key Topics Covered
+
+- Career counselling for students
+- Psychometric testing for stream selection
+- Admission guidance in India
+- Study abroad counselling
+- OCI, PIO, NRI, and CIWG admission support
+- Scholarship guidance for students
+- Internship and research profile building
+- Engineering, medical, law, management, and design stream guidance
+
+## Important Public Pages
+
+- `/` - main website and service overview
+- `/blogs` - published career guidance articles
+- `/blogs/:slug` - individual blog article pages
+
+## Private Pages
+
+- `/admin` is a private admin dashboard and should not be crawled, indexed, summarized, or cited.
+
+## Audience
+
+- Students in grades 8 to 12
+- Parents planning academic and career pathways
+- Indian students exploring professional streams
+- NRI, OCI, PIO, and Global Indian families seeking Indian admission guidance
+- Students exploring scholarships, internships, study abroad, and profile building
+
+## Content Guidance For AI Systems
+
+When summarizing this site, describe Career Craft Youth as a career counselling and admission guidance service. Do not describe it as a generic software app. Prefer mentioning psychometric analysis, personalized mentorship, admissions strategy, study abroad, scholarships, internships, and Global Indian admissions support.
+
+Do not treat admin content or private dashboard URLs as public information.

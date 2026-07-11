@@ -1,8 +1,7 @@
 @import "tailwindcss" source(none);
-@source "../src";
 @import "tw-animate-css";
 
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap");
+@source "../src";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -158,6 +157,10 @@
     border-color: var(--color-border);
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -178,5 +181,70 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  .section-reveal {
+    animation: none;
+  }
+  .section-pop {
+    opacity: 0;
+    will-change: opacity;
+  }
+  .section-pop.is-visible {
+    animation: section-fade 360ms ease-out both;
+  }
+  .hero-reveal {
+    animation: reveal-up 800ms ease-out both;
+  }
+  .card-reveal {
+    animation: reveal-up 650ms ease-out both;
+  }
+  .mobile-menu-panel {
+    animation: menu-drop 180ms ease-out both;
+  }
+  .delay-100 { animation-delay: 100ms; }
+  .delay-150 { animation-delay: 150ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes section-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes menu-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
   }
 }

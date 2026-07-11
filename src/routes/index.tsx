@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef, type FormEvent } from "react";
 import {
   Compass, Globe2, GraduationCap, Plane, Brain, Users, Award,
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
@@ -10,6 +10,7 @@ import {
 import heroImg from "@/assets/hero.jpg";
 import counselorImg from "@/assets/counselor.png";
 import futureReadyImg from "@/assets/future-ready.jpg";
+import { getSupabaseClient } from "@/lib/supabase";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,11 +24,30 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const FB = "https://www.facebook.com/profile.php?id=61576293282096";
-const IG = "https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=zkjqm3r";
-const LI = "https://www.linkedin.com/in/rupali-rathore";
+type SocialLinks = {
+  facebook: string;
+  instagram: string;
+  linkedin: string;
+};
 
-function Header() {
+const DEFAULT_SOCIAL_LINKS: SocialLinks = {
+  facebook: "https://www.facebook.com/profile.php?id=61576293282096",
+  instagram: "https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=zkjqm3r",
+  linkedin: "https://www.linkedin.com/in/rupali-rathore",
+};
+const sectionIds = [
+  "hero",
+  "services",
+  "discovery",
+  "community",
+  "scholarships",
+  "internships",
+  "about",
+  "testimonials",
+  "contact",
+] as const;
+
+function Header({ activeSection, socialLinks }: { activeSection: string; socialLinks: SocialLinks }) {
   const [open, setOpen] = useState(false);
   const links = [
     { label: "Services", href: "#services" },
@@ -36,54 +56,73 @@ function Header() {
     { label: "Internships", href: "#internships" },
     { label: "About", href: "#about" },
     { label: "Testimonials", href: "#testimonials" },
+    { label: "Blogs", href: "/blogs" },
     { label: "Contact", href: "#contact" },
   ];
   return (
     <>
-      <div className="bg-primary text-white/95 text-[11px] md:text-xs font-medium tracking-wide text-center py-1.5 border-b border-white/10">
-        <div className="inline-flex items-center gap-1.5">
+      <div className="bg-primary text-white/95 text-[11px] md:text-xs font-medium tracking-wide text-center px-3 py-1.5 border-b border-white/10">
+        <div className="inline-flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
           <Landmark className="w-3.5 h-3.5 text-gold" />
           <span>Government of India Registered MSME</span>
-          <span className="mx-1 text-white/40">|</span>
+          <span className="hidden sm:inline mx-1 text-white/40">|</span>
           <BadgeCheck className="w-3.5 h-3.5 text-gold" />
           <span>Trusted by Parents | Driven by Science</span>
         </div>
       </div>
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/85 border-b border-border">
-      <div className="mx-auto max-w-7xl px-6 h-18 flex items-center justify-between py-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-18 md:h-[5rem] flex items-center justify-between py-3 md:py-4">
         <a href="#" className="flex items-center gap-2.5">
-          <span className="grid place-items-center w-10 h-10 rounded-lg bg-hero-gradient shadow-elegant">
-            <Compass className="w-5 h-5 text-gold" />
+          <span className="grid place-items-center w-12 h-12 md:w-12 md:h-12 rounded-lg bg-hero-gradient shadow-elegant">
+            <Compass className="w-6 h-6 md:w-6 md:h-6 text-gold" />
           </span>
-          <span className="font-display text-lg font-semibold tracking-tight text-primary">
+          <span className="font-display text-lg sm:text-xl md:text-xl font-semibold tracking-tight text-primary">
             Career Craft <span className="text-gradient-gold">Youth</span>
           </span>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-foreground/80">
           {links.map(l => (
-            <a key={l.href} href={l.href} className="hover:text-primary transition-colors">{l.label}</a>
+            <a
+              key={l.href}
+              href={l.href}
+              aria-current={l.href.startsWith("#") && activeSection === l.href.slice(1) ? "page" : undefined}
+              className={`relative pb-1 transition-colors after:absolute after:left-0 after:-bottom-0.5 after:h-0.5 after:w-full after:origin-left after:rounded-full after:bg-gold after:transition-transform after:duration-300 hover:text-primary hover:after:scale-x-100 ${
+                l.href.startsWith("#") && activeSection === l.href.slice(1)
+                  ? "text-primary after:scale-x-100"
+                  : "after:scale-x-0"
+              }`}
+            >
+              {l.label}
+            </a>
           ))}
         </nav>
         <div className="hidden md:flex items-center gap-4">
-          <div className="flex items-center gap-2 text-primary/70">
-            <a href={FB} aria-label="Facebook" className="hover:text-primary transition"><Facebook className="w-4 h-4" /></a>
-            <a href={IG} aria-label="Instagram" className="hover:text-primary transition"><Instagram className="w-4 h-4" /></a>
-            <a href={LI} aria-label="LinkedIn" className="hover:text-primary transition"><Linkedin className="w-4 h-4" /></a>
-          </div>
           <a href="#contact" className="inline-flex items-center gap-1.5 bg-gold-gradient text-gold-foreground px-5 py-2.5 rounded-md text-sm font-semibold shadow-gold hover:opacity-95 transition">
             Book Now <ArrowRight className="w-4 h-4" />
           </a>
         </div>
-        <button onClick={() => setOpen(!open)} className="md:hidden p-2 text-primary" aria-label="Menu">
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        <button onClick={() => setOpen(!open)} className="md:hidden min-w-12 min-h-12 grid place-items-center text-primary" aria-label="Menu">
+          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
       {open && (
-        <div className="md:hidden border-t border-border bg-white px-6 py-4 space-y-3">
+        <div className="mobile-menu-panel md:hidden border-t border-border bg-white px-4 py-4 space-y-3 shadow-card">
           {links.map(l => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block text-sm font-medium">{l.label}</a>
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              aria-current={l.href.startsWith("#") && activeSection === l.href.slice(1) ? "page" : undefined}
+              className={`block rounded-md px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                l.href.startsWith("#") && activeSection === l.href.slice(1)
+                  ? "bg-accent text-primary border-l-4 border-gold pl-2"
+                  : "text-foreground/80 hover:bg-secondary hover:text-primary"
+              }`}
+            >
+              {l.label}
+            </a>
           ))}
-          <a href="#contact" onClick={() => setOpen(false)} className="block bg-gold-gradient text-gold-foreground px-4 py-2 rounded-md text-sm font-semibold text-center">Book Now</a>
+          <a href="#contact" onClick={() => setOpen(false)} className="block bg-gold-gradient text-gold-foreground px-4 py-3 rounded-md text-sm font-semibold text-center">Book Now</a>
         </div>
       )}
     </header>
@@ -93,32 +132,32 @@ function Header() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-hero-gradient text-white">
+    <section id="hero" className="relative overflow-hidden bg-hero-gradient text-white">
       <div className="absolute inset-0 opacity-30">
         <img src={heroImg} alt="" className="w-full h-full object-cover" />
       </div>
       <div className="absolute inset-0 bg-gradient-to-r from-primary-deep via-primary/80 to-primary/40" />
-      <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-32 grid md:grid-cols-12 gap-10 items-center">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20 md:py-32 grid md:grid-cols-12 gap-10 items-center">
         <div className="md:col-span-7">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium text-white/90 backdrop-blur-sm">
             <Award className="w-3.5 h-3.5 text-gold" />
             Trusted by Parents | Driven by Science
           </div>
-          <h1 className="mt-6 font-display text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.05]">
-            Your Compass to a <span className="text-gradient-gold italic">Successful</span> Future.
+          <h1 className="mt-6 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.08]">
+            Your Compass to a <span className="inline-block px-1 text-gold tracking-normal">Successful</span> Future.
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
+          <p className="mt-5 md:mt-6 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
             Expert Psychometric Analysis and Strategic Admission Guidance for Students & Global Indians (OCI / NRI).
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <a href="#contact" className="inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-7 py-4 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+          <div className="mt-8 md:mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
+            <a href="#contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 sm:px-7 py-3.5 sm:py-4 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
               Schedule My Discovery Call <ArrowRight className="w-4 h-4" />
             </a>
-            <a href="#services" className="inline-flex items-center gap-2 px-7 py-4 rounded-md font-semibold border border-white/25 text-white hover:bg-white/10 transition">
+            <a href="#services" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-md font-semibold border border-white/25 text-white hover:bg-white/10 transition">
               Explore Services
             </a>
           </div>
-          <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/70">
+          <div className="mt-9 md:mt-12 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-8 gap-y-3 text-sm text-white/70">
             <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-gold" /> 1:1 Personalized Mentorship</div>
             <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-gold" /> Industry Veteran Panel</div>
             <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-gold" /> Global Indian Desk</div>
@@ -153,18 +192,18 @@ const services = [
   },
 ];
 
-function Services() {
+function Services({ isVisible }: { isVisible: boolean }) {
   return (
-    <section id="services" className="py-24 md:py-32 bg-surface">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="services" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-surface`}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl">
           <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Services</div>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary">Specialized counsel, targeted outcomes.</h2>
-          <p className="mt-4 text-muted-foreground text-lg">Three high-impact pillars built around the realities of modern admissions — for Indian and global Indian families alike.</p>
+          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary">Specialized counsel, targeted outcomes.</h2>
+          <p className="mt-4 text-muted-foreground text-base sm:text-lg">Three high-impact pillars built around the realities of modern admissions — for Indian and global Indian families alike.</p>
         </div>
-        <div className="mt-14 grid md:grid-cols-3 gap-6">
-          {services.map((s) => (
-            <div key={s.title} className="group relative bg-card border border-border rounded-2xl p-8 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-all duration-300">
+        <div className="mt-10 md:mt-14 grid md:grid-cols-3 gap-5 md:gap-6">
+          {services.map((s, i) => (
+            <div key={s.title} className={`card-reveal group relative bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-all duration-300 ${i === 1 ? "delay-100" : i === 2 ? "delay-200" : ""}`}>
               <div className="flex items-center justify-between">
                 <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary text-white">
                   <s.icon className="w-6 h-6 text-gold" />
@@ -182,7 +221,7 @@ function Services() {
           ))}
         </div>
 
-        <div className="mt-10 grid md:grid-cols-4 gap-4">
+        <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {[
             { icon: Cog, label: "Engineering" },
             { icon: Stethoscope, label: "Medical" },
@@ -193,7 +232,7 @@ function Services() {
             { icon: Globe2, label: "OCI / NRI" },
             { icon: Brain, label: "Psychometrics" },
           ].map(p => (
-            <div key={p.label} className="flex items-center gap-3 bg-white border border-border rounded-lg px-4 py-3">
+            <div key={p.label} className="flex items-center gap-3 bg-white border border-border rounded-lg px-4 py-3 min-h-12">
               <p.icon className="w-4 h-4 text-gold-deep" />
               <span className="text-sm font-medium text-foreground/85">{p.label}</span>
             </div>
@@ -204,16 +243,16 @@ function Services() {
   );
 }
 
-function Discovery() {
+function Discovery({ isVisible }: { isVisible: boolean }) {
   return (
-    <section id="discovery" className="py-24 md:py-32 bg-background">
-      <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
+    <section id="discovery" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-2 gap-10 md:gap-12 items-center">
         <div>
           <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Discovery Tests</div>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
+          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">
             8th–12th Grade <span className="italic text-gradient-gold">Stream Discovery</span>.
           </h2>
-          <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
+          <p className="mt-5 text-muted-foreground text-base sm:text-lg leading-relaxed">
             A scientifically-validated psychometric analysis that maps aptitude, personality and interest to the right academic stream — long before the pressure of decisions hits.
           </p>
           <ul className="mt-8 space-y-3">
@@ -229,25 +268,25 @@ function Discovery() {
               </li>
             ))}
           </ul>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <a href="#contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-deep transition">
+          <div className="mt-8 md:mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+            <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-deep transition">
               Learn More <ArrowRight className="w-4 h-4" />
             </a>
-            <span className="inline-flex items-center gap-2 px-4 py-3 rounded-md border border-dashed border-gold text-gold-deep text-sm font-medium">
+            <span className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md border border-dashed border-gold text-gold-deep text-sm font-medium">
               <Sparkles className="w-4 h-4" /> Early-bird pricing &amp; offers — ask us
             </span>
           </div>
         </div>
-        <div className="relative">
+        <div className="card-reveal delay-150 relative">
           <div className="absolute -inset-6 bg-gold-gradient opacity-20 blur-3xl rounded-full" />
-          <div className="relative bg-hero-gradient rounded-3xl p-10 text-white shadow-elegant">
+          <div className="relative bg-hero-gradient rounded-3xl p-6 sm:p-8 md:p-10 text-white shadow-elegant">
             <Brain className="w-12 h-12 text-gold" />
             <div className="mt-6 text-sm uppercase tracking-wider text-white/60">Psychometric Analysis</div>
-            <div className="mt-2 text-3xl font-display font-semibold">Clarity, not guesswork.</div>
-            <div className="mt-8 grid grid-cols-3 gap-4 pt-8 border-t border-white/15">
-              <div><div className="text-3xl font-semibold text-gold">12+</div><div className="text-xs text-white/70 mt-1">Aptitude domains</div></div>
-              <div><div className="text-3xl font-semibold text-gold">30pg</div><div className="text-xs text-white/70 mt-1">Report</div></div>
-              <div><div className="text-3xl font-semibold text-gold">1:1</div><div className="text-xs text-white/70 mt-1">Debrief</div></div>
+            <div className="mt-2 text-2xl sm:text-3xl font-display font-semibold">Clarity, not guesswork.</div>
+            <div className="mt-8 grid grid-cols-3 gap-2 sm:gap-4 pt-8 border-t border-white/15">
+              <div><div className="text-2xl sm:text-3xl font-semibold text-gold">12+</div><div className="text-xs text-white/70 mt-1">Aptitude domains</div></div>
+              <div><div className="text-2xl sm:text-3xl font-semibold text-gold">30pg</div><div className="text-xs text-white/70 mt-1">Report</div></div>
+              <div><div className="text-2xl sm:text-3xl font-semibold text-gold">1:1</div><div className="text-xs text-white/70 mt-1">Debrief</div></div>
             </div>
           </div>
         </div>
@@ -256,11 +295,11 @@ function Discovery() {
   );
 }
 
-function Community() {
+function Community({ isVisible }: { isVisible: boolean }) {
   return (
-    <section className="py-24 bg-surface">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="relative overflow-hidden rounded-3xl bg-primary text-white shadow-elegant">
+    <section id="community" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-24 bg-surface`}>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="card-reveal relative overflow-hidden rounded-2xl md:rounded-3xl bg-primary text-white shadow-elegant">
           <div className="relative w-full aspect-[16/9] md:aspect-[21/9]">
             <img
               src={futureReadyImg}
@@ -269,17 +308,17 @@ function Community() {
               loading="lazy"
             />
           </div>
-          <div className="relative p-10 md:p-12 text-center">
+          <div className="relative p-6 sm:p-8 md:p-12 text-center">
             <div className="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-gold-gradient opacity-20 blur-3xl" />
             <div className="relative max-w-2xl mx-auto">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium">
                 <Users className="w-3.5 h-3.5 text-gold" /> Free Community
               </div>
-              <h2 className="mt-5 text-3xl md:text-4xl font-display font-semibold">Join the Inner Circle.</h2>
+              <h2 className="mt-5 text-2xl sm:text-3xl md:text-4xl font-display font-semibold">Join the Inner Circle.</h2>
               <p className="mt-4 text-white/80 leading-relaxed">
                 Real-time admission alerts, internships, new-age courses and expert tips — free, always.
               </p>
-              <a href="#contact" className="mt-8 inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+              <a href="#contact" className="mt-8 inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
                 <MessageCircle className="w-5 h-5" /> Join on WhatsApp
               </a>
             </div>
@@ -290,34 +329,34 @@ function Community() {
   );
 }
 
-function Scholarships() {
+function Scholarships({ isVisible }: { isVisible: boolean }) {
   const highlights = [
     { icon: Wallet, title: "Central & State Schemes", desc: "Pre-matric, post-matric, merit-cum-means and minority scholarships — all in one verified portal." },
     { icon: Trophy, title: "Merit & Need Based", desc: "From top-rankers to first-generation learners — funding pathways for every profile and every stream." },
     { icon: BookOpen, title: "Apply with Confidence", desc: "We help you decode eligibility, deadlines and documentation so no deserving student is left behind." },
   ];
   return (
-    <section id="scholarships" className="py-24 md:py-32 bg-background">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid lg:grid-cols-12 gap-12 items-start">
+    <section id="scholarships" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
           <div className="lg:col-span-5">
             <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Scholarships for All</div>
-            <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
+            <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">
               Funding the <span className="italic text-gradient-gold">dreams</span> of every learner.
             </h2>
-            <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
+            <p className="mt-5 text-muted-foreground text-base sm:text-lg leading-relaxed">
               Talent should never be limited by tuition. Explore India’s National Scholarship Portal — a single gateway to hundreds of central & state government scholarships for school, college and professional courses.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
               <a
                 href="https://scholarships.gov.in/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
+                className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
               >
                 Explore Scholarships <ArrowRight className="w-4 h-4" />
               </a>
-              <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
+              <a href="#contact" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
                 Get Guidance
               </a>
             </div>
@@ -325,7 +364,7 @@ function Scholarships() {
           </div>
           <div className="lg:col-span-7 grid sm:grid-cols-1 gap-5">
             {highlights.map(h => (
-              <div key={h.title} className="flex items-start gap-5 bg-card border border-border rounded-2xl p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow">
+              <div key={h.title} className="card-reveal flex items-start gap-4 sm:gap-5 bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow">
                 <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary shrink-0">
                   <h.icon className="w-6 h-6 text-gold" />
                 </div>
@@ -342,7 +381,7 @@ function Scholarships() {
   );
 }
 
-function Internships() {
+function Internships({ isVisible }: { isVisible: boolean }) {
   const cards = [
     {
       icon: FileText,
@@ -366,20 +405,20 @@ function Internships() {
     },
   ];
   return (
-    <section id="internships" className="py-24 md:py-32 bg-surface">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="internships" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-surface`}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-3xl">
           <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Internships & Research</div>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
+          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">
             Build proof, not just <span className="italic text-gradient-gold">potential</span>.
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-4 text-base sm:text-lg text-muted-foreground">
             Stand out in admissions with real-world experience. We help students secure internships, publish research, and craft portfolios that colleges actually notice.
           </p>
         </div>
-        <div className="mt-14 grid md:grid-cols-2 gap-6">
-          {cards.map((c) => (
-            <div key={c.title} className="group flex items-start gap-5 bg-card border border-border rounded-2xl p-7 shadow-card hover:shadow-elegant transition-shadow">
+        <div className="mt-10 md:mt-14 grid md:grid-cols-2 gap-5 md:gap-6">
+          {cards.map((c, i) => (
+            <div key={c.title} className={`card-reveal group flex items-start gap-4 sm:gap-5 bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow ${i % 2 === 1 ? "delay-100" : ""}`}>
               <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary shrink-0">
                 <c.icon className="w-6 h-6 text-gold" />
               </div>
@@ -390,11 +429,11 @@ function Internships() {
             </div>
           ))}
         </div>
-        <div className="mt-12 flex flex-wrap gap-3">
-          <a href="#contact" className="inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+        <div className="mt-10 md:mt-12 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+          <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
             Get Started <ArrowRight className="w-4 h-4" />
           </a>
-          <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
+          <a href="#contact" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
             Ask About Opportunities
           </a>
         </div>
@@ -403,7 +442,7 @@ function Internships() {
   );
 }
 
-function About() {
+function About({ isVisible }: { isVisible: boolean }) {
   const experts = [
     {
       icon: Globe2,
@@ -422,24 +461,24 @@ function About() {
     },
   ];
   return (
-    <section id="about" className="py-24 md:py-32 bg-background">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="about" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-3xl">
           <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">About</div>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">Meet your lead counselor &amp; expert team.</h2>
-          <p className="mt-4 text-lg text-muted-foreground">A personalized roadmap, driven by domain specialists.</p>
+          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">Meet your lead counselor &amp; expert team.</h2>
+          <p className="mt-4 text-base sm:text-lg text-muted-foreground">A personalized roadmap, driven by domain specialists.</p>
         </div>
 
-        <div className="mt-16 grid lg:grid-cols-2 gap-10">
-          <div className="bg-surface border border-border rounded-3xl p-8 md:p-10 shadow-card">
-            <div className="relative aspect-[4/5] max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-accent via-surface to-secondary">
+        <div className="mt-10 md:mt-16 grid lg:grid-cols-2 gap-8 md:gap-10">
+          <div className="card-reveal bg-surface border border-border rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-10 shadow-card">
+            <div className="relative aspect-[4/5] max-w-sm mx-auto lg:mx-0 overflow-hidden rounded-2xl bg-gradient-to-br from-accent via-surface to-secondary">
               <div className="absolute inset-0 bg-gold-gradient opacity-10" />
               <img src={counselorImg} alt="Rupali Rathore, Lead Career Counselor" className="relative w-full h-full object-contain object-bottom" loading="lazy" />
             </div>
             <div className="mt-7">
               <h3 className="text-2xl font-display font-semibold text-primary">Rupali Rathore</h3>
               <div className="text-sm font-medium text-gold-deep mt-1">Lead Career Counselor &amp; Founder</div>
-              <blockquote className="mt-6 text-foreground/85 leading-relaxed border-l-2 border-gold pl-5 italic">
+              <blockquote className="mt-6 text-sm sm:text-base text-foreground/85 leading-relaxed border-l-2 border-gold pl-4 sm:pl-5 italic">
                 “Every student deserves more than just a template for their future — they deserve a personalized compass. My mission is to deeply understand your unique strengths, reduce the overwhelming anxiety of admissions, and match you with the precise industry veterans who can unlock your dream career. We don’t just look at grades; we craft trajectories with empathy, clarity, and measurable results.”
               </blockquote>
             </div>
@@ -448,7 +487,7 @@ function About() {
           <div className="space-y-5">
             <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">The Expert Panel</div>
             {experts.map(e => (
-              <div key={e.title} className="bg-card border border-border rounded-2xl p-7 shadow-card hover:shadow-elegant transition-shadow">
+              <div key={e.title} className="card-reveal bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow">
                 <div className="flex items-start gap-4">
                   <div className="grid place-items-center w-11 h-11 rounded-lg bg-primary shrink-0">
                     <e.icon className="w-5 h-5 text-gold" />
@@ -463,14 +502,14 @@ function About() {
           </div>
         </div>
 
-        <div className="mt-14 rounded-2xl border border-gold/30 bg-gradient-to-br from-accent to-surface p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div className="card-reveal mt-10 md:mt-14 rounded-2xl border border-gold/30 bg-gradient-to-br from-accent to-surface p-5 sm:p-6 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
           <div className="text-xs font-semibold uppercase tracking-wider text-gold-deep">Why Career Craft Youth?</div>
-            <p className="mt-2 text-lg text-primary max-w-2xl">
+            <p className="mt-2 text-base sm:text-lg text-primary max-w-2xl">
               By blending modern psychometric analysis with the collective wisdom of seasoned academic and corporate mentors, we ensure our students get a massive competitive edge.
             </p>
           </div>
-          <a href="#contact" className="inline-flex items-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold whitespace-nowrap hover:scale-[1.02] transition-transform">
+          <a href="#contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
             Schedule My Discovery Call <ArrowRight className="w-4 h-4" />
           </a>
         </div>
@@ -479,7 +518,7 @@ function About() {
   );
 }
 
-function Testimonials() {
+function Testimonials({ isVisible }: { isVisible: boolean }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -539,15 +578,15 @@ function Testimonials() {
   ];
 
   return (
-    <section id="testimonials" className="py-24 md:py-32 bg-surface">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="testimonials" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-surface`}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div className="max-w-3xl">
             <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Testimonials</div>
-            <h2 className="mt-3 text-4xl md:text-5xl font-semibold text-primary leading-tight">
+            <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">
               Voices of <span className="italic text-gradient-gold">trust</span> &amp; transformation.
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-4 text-base sm:text-lg text-muted-foreground">
               Real stories from parents and students whose futures we helped shape — one decision at a time.
             </p>
           </div>
@@ -574,14 +613,14 @@ function Testimonials() {
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className="mt-14 flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+          className="mt-10 md:mt-14 flex gap-4 md:gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {testimonials.map((t, i) => (
             <div
               key={i}
               data-card
-              className="group bg-card border border-border rounded-2xl p-8 shadow-card hover:shadow-elegant transition-all duration-300 flex flex-col min-w-[320px] md:min-w-[380px] max-w-[380px] snap-start"
+              className="card-reveal group bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 shadow-card hover:shadow-elegant transition-all duration-300 flex flex-col min-w-[calc(100vw-2rem)] sm:min-w-[320px] md:min-w-[380px] max-w-[380px] snap-start"
             >
               <div className="flex items-center gap-1 mb-5">
                 {Array.from({ length: t.rating }).map((_, r) => (
@@ -602,31 +641,61 @@ function Testimonials() {
   );
 }
 
-function Contact() {
+function Contact({ isVisible, socialLinks }: { isVisible: boolean; socialLinks: SocialLinks }) {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setSubmitError("");
+
+    const formData = new FormData(e.currentTarget);
+    const payload = {
+      full_name: String(formData.get("name") ?? ""),
+      phone: String(formData.get("phone") ?? ""),
+      grade_interest: String(formData.get("interest") ?? ""),
+      message: String(formData.get("message") ?? ""),
+    };
+
+    try {
+      const { error } = await getSupabaseClient()
+        .from("contact_submissions")
+        .insert(payload);
+
+      if (error) throw error;
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Unable to submit the form. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
-    <section id="contact" className="py-24 md:py-32 bg-hero-gradient text-white relative overflow-hidden">
+    <section id="contact" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-hero-gradient text-white relative overflow-hidden`}>
       <div className="absolute -left-32 -bottom-32 w-96 h-96 bg-gold-gradient opacity-10 blur-3xl rounded-full" />
-      <div className="relative mx-auto max-w-6xl px-6 grid lg:grid-cols-2 gap-14">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 grid lg:grid-cols-2 gap-10 md:gap-14">
         <div>
           <div className="text-sm font-semibold text-gold uppercase tracking-wider">Get in Touch</div>
-          <h2 className="mt-3 text-4xl md:text-5xl font-display font-semibold leading-tight">Let’s craft your trajectory.</h2>
-          <p className="mt-5 text-white/80 text-lg max-w-md">Share a few details and our team will reach out within 24 hours to schedule your discovery call.</p>
+          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-display font-semibold leading-tight">Let’s craft your trajectory.</h2>
+          <p className="mt-5 text-white/80 text-base sm:text-lg max-w-md">Share a few details and our team will reach out within 24 hours to schedule your discovery call.</p>
           <div className="mt-10 space-y-4 text-white/80">
             <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-gold" /><span>+91 — Available on request</span></div>
             <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /><span>career.craftyouth@gmail.com</span></div>
             <div className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /><span>India · Serving Global Indians worldwide</span></div>
           </div>
           <div className="mt-8 flex items-center gap-3">
-            <a href={FB} aria-label="Facebook" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Facebook className="w-4 h-4" /></a>
-            <a href={IG} aria-label="Instagram" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Instagram className="w-4 h-4" /></a>
-            <a href={LI} aria-label="LinkedIn" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Linkedin className="w-4 h-4" /></a>
+            <a href={socialLinks.facebook} aria-label="Facebook" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Facebook className="w-4 h-4" /></a>
+            <a href={socialLinks.instagram} aria-label="Instagram" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Instagram className="w-4 h-4" /></a>
+            <a href={socialLinks.linkedin} aria-label="LinkedIn" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Linkedin className="w-4 h-4" /></a>
           </div>
         </div>
 
         <form
-          onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
-          className="bg-white text-foreground rounded-2xl p-8 md:p-10 shadow-elegant"
+          onSubmit={handleSubmit}
+          className="card-reveal bg-white text-foreground rounded-2xl p-5 sm:p-6 md:p-10 shadow-elegant"
         >
           {submitted ? (
             <div className="text-center py-10">
@@ -642,7 +711,7 @@ function Contact() {
                 <Field label="Phone" name="phone" type="tel" placeholder="+91 98xxxxxxxx" required />
                 <div>
                   <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wider">Grade / Interest</label>
-                  <select required className="mt-1.5 w-full px-4 py-3 rounded-md border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+                  <select name="interest" required className="mt-1.5 w-full px-4 py-3 rounded-md border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
                     <option value="">Select</option>
                     <option>Grade 8–10 (Stream Discovery)</option>
                     <option>Grade 11–12 (Admissions)</option>
@@ -654,10 +723,13 @@ function Contact() {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wider">Message</label>
-                  <textarea rows={4} placeholder="Tell us a little about your goals…" className="mt-1.5 w-full px-4 py-3 rounded-md border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                  <textarea name="message" rows={4} placeholder="Tell us a little about your goals…" className="mt-1.5 w-full px-4 py-3 rounded-md border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
                 </div>
-                <button type="submit" className="w-full inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.01] transition-transform">
-                  Schedule My Discovery Call <ArrowRight className="w-4 h-4" />
+                {submitError && (
+                  <p className="text-sm font-medium text-destructive">{submitError}</p>
+                )}
+                <button type="submit" disabled={submitting} className="w-full inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.01] transition-transform disabled:opacity-60 disabled:cursor-not-allowed">
+                  {submitting ? "Submitting..." : "Schedule My Discovery Call"} <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </>
@@ -678,10 +750,10 @@ function Field({ label, name, type = "text", placeholder, required }: { label: s
   );
 }
 
-function Footer() {
+function Footer({ socialLinks }: { socialLinks: SocialLinks }) {
   return (
     <footer className="bg-primary-deep text-white/80">
-      <div className="mx-auto max-w-7xl px-6 py-16 grid md:grid-cols-4 gap-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 md:py-16 grid md:grid-cols-4 gap-8 md:gap-10">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
             <span className="grid place-items-center w-10 h-10 rounded-lg bg-white/10">
@@ -693,9 +765,15 @@ function Footer() {
             Your compass to a successful future — personalized career counseling, admissions strategy, and a global Indian desk under one roof.
           </p>
           <div className="mt-6 flex items-center gap-3">
-            <a href={FB} aria-label="Facebook" className="w-9 h-9 grid place-items-center rounded-full border border-white/15 hover:bg-white/10 transition"><Facebook className="w-4 h-4" /></a>
-            <a href={IG} aria-label="Instagram" className="w-9 h-9 grid place-items-center rounded-full border border-white/15 hover:bg-white/10 transition"><Instagram className="w-4 h-4" /></a>
-            <a href={LI} aria-label="LinkedIn" className="w-9 h-9 grid place-items-center rounded-full border border-white/15 hover:bg-white/10 transition"><Linkedin className="w-4 h-4" /></a>
+            <a href={socialLinks.facebook} aria-label="Facebook" className="grid place-items-center transition hover:opacity-80">
+              <img src="/social/facebook.svg" alt="" className="w-7 h-7" loading="lazy" />
+            </a>
+            <a href={socialLinks.instagram} aria-label="Instagram" className="grid place-items-center transition hover:opacity-80">
+              <img src="/social/instagram.svg" alt="" className="w-7 h-7" loading="lazy" />
+            </a>
+            <a href={socialLinks.linkedin} aria-label="LinkedIn" className="grid place-items-center transition hover:opacity-80">
+              <img src="/social/linkedin.svg" alt="" className="w-7 h-7" loading="lazy" />
+            </a>
           </div>
         </div>
         <div>
@@ -721,7 +799,7 @@ function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 py-6 text-xs text-white/55 flex flex-col md:flex-row gap-2 md:justify-between">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 text-xs text-white/55 flex flex-col md:flex-row gap-2 md:justify-between">
           <div>© {new Date().getFullYear()} Career Craft Youth. All rights reserved.</div>
           <div>Crafted with empathy, clarity &amp; measurable results.</div>
         </div>
@@ -731,19 +809,79 @@ function Footer() {
 }
 
 function Index() {
+  const [activeSection, setActiveSection] = useState("");
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(() => new Set());
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>(DEFAULT_SOCIAL_LINKS);
+
+  useEffect(() => {
+    let mounted = true;
+
+    getSupabaseClient()
+      .from("site_settings")
+      .select("value")
+      .eq("key", "social_links")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!mounted || !data?.value || typeof data.value !== "object") return;
+        const value = data.value as Partial<SocialLinks>;
+        setSocialLinks({
+          facebook: value.facebook || DEFAULT_SOCIAL_LINKS.facebook,
+          instagram: value.instagram || DEFAULT_SOCIAL_LINKS.instagram,
+          linkedin: value.linkedin || DEFAULT_SOCIAL_LINKS.linkedin,
+        });
+      })
+      .catch(() => undefined);
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target instanceof HTMLElement) {
+          setActiveSection(visible.target.id);
+        }
+        setVisibleSections((prev) => {
+          let next = prev;
+          for (const entry of entries) {
+            if (!entry.isIntersecting || !(entry.target instanceof HTMLElement)) continue;
+            const id = entry.target.id;
+            if (prev.has(id)) continue;
+            if (next === prev) next = new Set(prev);
+            next.add(id);
+          }
+          return next;
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0.01 },
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main className="min-h-screen bg-background">
-      <Header />
+      <Header activeSection={activeSection} socialLinks={socialLinks} />
       <Hero />
-      <Services />
-      <Discovery />
-      <Community />
-      <Scholarships />
-      <Internships />
-      <About />
-      <Testimonials />
-      <Contact />
-      <Footer />
+      <Services isVisible={visibleSections.has("services")} />
+      <Discovery isVisible={visibleSections.has("discovery")} />
+      <Community isVisible={visibleSections.has("community")} />
+      <Scholarships isVisible={visibleSections.has("scholarships")} />
+      <Internships isVisible={visibleSections.has("internships")} />
+      <About isVisible={visibleSections.has("about")} />
+      <Testimonials isVisible={visibleSections.has("testimonials")} />
+      <Contact isVisible={visibleSections.has("contact")} socialLinks={socialLinks} />
+      <Footer socialLinks={socialLinks} />
     </main>
   );
 }

@@ -40,6 +40,7 @@ const sectionIds = [
   "services",
   "discovery",
   "community",
+  "faq",
   "scholarships",
   "internships",
   "about",
@@ -52,6 +53,7 @@ function Header({ activeSection, socialLinks }: { activeSection: string; socialL
   const links = [
     { label: "Services", href: "#services" },
     { label: "Discovery Tests", href: "#discovery" },
+    { label: "FAQ", href: "#faq" },
     { label: "Scholarships", href: "#scholarships" },
     { label: "Internships", href: "#internships" },
     { label: "About", href: "#about" },
@@ -340,6 +342,175 @@ function Community({ isVisible }: { isVisible: boolean }) {
               </a>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const admissionFaqs = [
+  {
+    question: "What is the rule update for OCI cards issued after March 4, 2021, regarding IIT admissions?",
+    answer: [
+      "If your child obtained their OCI card subsequent to March 4, 2021, they are considered Foreign National candidates. They are excluded from competing in the general pool with Indian citizens and are eligible only for the 10% Foreign Supernumerary seats.",
+    ],
+  },
+  {
+    question: "Does a post-March 4, 2021 OCI holder need to write JEE Main to get into an IIT?",
+    answer: [
+      "No. OCI students classified under the Foreign National category can bypass the JEE Main exam entirely and register directly for JEE Advanced.",
+    ],
+  },
+  {
+    question: "What if the OCI card was issued before March 4, 2021?",
+    answer: [
+      "These candidates have a choice during JEE Advanced registration: they can apply either as a Foreign National, competing for the 10% supernumerary pool, or at par with Indian Nationals, competing in the OPEN merit category. This choice is final once submitted.",
+    ],
+  },
+  {
+    question: "Can OCI/NRI students get into NITs and IIITs without writing JEE Main?",
+    answer: [
+      "No. Admissions to premium central institutes like NITs, IIITs, and SPAs happen via the DASA (Direct Admission of Students Abroad) scheme, which now strictly requires a JEE Main score. Some pathways may also need SAT scores for eligibility, along with 60% PCM marks in boards.",
+    ],
+  },
+  {
+    question: "Can an OCI/NRI/CIWG candidate give MHT-CET?",
+    answer: [
+      "No. Candidates in these categories (NRI, OCI, CIWG) can apply for direct admission to undergraduate engineering (B.E./B.Tech) and other courses in Maharashtra under the 15% supernumerary quota.",
+    ],
+  },
+  {
+    question: "Can an OCI/PIO/NRI get a domicile certificate in Maharashtra?",
+    answer: [
+      "OCI (Overseas Citizen of India) cardholders cannot independently apply for or obtain a state domicile certificate in Maharashtra. For strict administrative purposes like government employment, OCI holders remain ineligible under The Citizenship Act, 1955.",
+    ],
+  },
+  {
+    question: "Is there any reservation in Karnataka for OCI/NRI students in KCET/COMEDK?",
+    answer: [
+      "The NRI quota: by Supreme Court and National Medical Commission (NMC) guidelines, private and deemed colleges must reserve 15% of their total seats for the NRI category. OCI students are fully eligible to compete for these specific NRI seats.",
+      "New OCI regulations: under state regulations governing professional courses like medical/dental, OCIs born on or before March 4, 2021, are not eligible for standard Indian citizen quotas. However, OCI candidates born on or after March 5, 2021, can seek admission through designated NRI seats or supernumerary seats.",
+      "Supernumerary seats: some specific institutions and colleges reserve additional supernumerary quotas for foreign and NRI students, allowing them to apply for reduced tuition fees compared to general management seats.",
+      "Register with KEA and MCC simultaneously if targeting both private-college and deemed-university seats.",
+      "To successfully apply under this quota through the Karnataka Examinations Authority, you will generally need documents verifying NRI status, such as a sponsor's valid passport, work permit, and embassy certificate, along with required NEET or entrance examination scores.",
+    ],
+  },
+  {
+    question: "Who qualifies under NRI quota?",
+    answer: [
+      "Eligibility falls into a few distinct categories, and the exact documentation required differs by which one applies to you.",
+      "NRI candidates: the student themselves has lived abroad as a Non-Resident Indian, typically requiring 182+ days per year of residence abroad, with passport and visa stamps as primary proof.",
+      "OCI (Overseas Citizen of India) holders: foreign citizens of Indian origin holding an OCI card.",
+      "PIO (Person of Indian Origin): an older classification largely merged into OCI now, but still referenced in some college and counselling documentation.",
+      "NRI-sponsored candidates: an Indian-resident student sponsored financially by a close NRI relative. Karnataka's rules on this are comparatively more flexible than some other states, but the sponsor must generally be a real blood relation - parent, sibling, aunt, or uncle - supported by an affidavit and relationship proof, not just any NRI willing to pay fees.",
+    ],
+  },
+  {
+    question: "What documents are required for NRI quota admission?",
+    answer: [
+      "Candidate's passport, and visa/residence proof if the candidate themselves holds NRI status.",
+      "NRI sponsor's passport and visa stamps, if applying under the NRI-sponsored category.",
+      "Relationship proof between candidate and sponsor, such as birth certificate, affidavit, or court-recognised documentation, for sponsored applications.",
+      "Embassy Certificate or NOC from the Ministry of External Affairs or the relevant country's embassy/high commission, typically issued within the last 6 months.",
+      "NEET UG scorecard for medical admissions or the relevant entrance exam scorecard for other courses.",
+      "Class 10 and Class 12 mark sheets, transfer certificate from the last attended institution, migration certificate for students from a foreign education board, character certificate, and passport-sized photographs as per the specific college format.",
+    ],
+  },
+  {
+    question: "OCI vs PIO: why will you see both terms?",
+    answer: [
+      "You will still encounter PIO (Person of Indian Origin) in older college documentation and some counselling materials, even though the Indian government merged the PIO scheme into the OCI (Overseas Citizen of India) scheme some years ago.",
+      "For practical purposes today, if you are a foreign citizen of Indian origin, you will be applying with an OCI card, not a separate PIO card. When in doubt, ask the specific college admission office which exact terminology and documentation they currently require, since some institutional paperwork has not fully updated to reflect the OCI consolidation.",
+    ],
+  },
+  {
+    question: "When should students start preparing for the admission process?",
+    answer: [
+      "Start 6-12 months before the intended admission. Confirm which category - NRI, OCI, PIO, or sponsored - genuinely applies, identify which specific documents are required, and take help from your counsellor.",
+    ],
+  },
+  {
+    question: "My son is appearing in VITEEE. As an OCI card holder, what will his fee structure be?",
+    answer: [
+      "He can apply both ways: as an Indian candidate by giving the VITEEE exam, or directly through OCI quota admission.",
+    ],
+  },
+  {
+    question: "My son is appearing in SRMJEE. As an OCI card holder, what will his fee structure be?",
+    answer: [
+      "SRM branches may not all allow the exam route. OCI/NRI/PIO candidates can apply directly with higher fees. Scholarships may be available, including girls' quota and other categories, subject to change with time.",
+    ],
+  },
+  {
+    question: "Can an OCI card holder who completed MBBS from India get admission in medical colleges under the general category in NEET PG?",
+    answer: [
+      "Yes, an OCI card holder who has completed MBBS can get admission in medical college through NEET, subject to the applicable eligibility rules.",
+    ],
+  },
+  {
+    question: "What are DASA and CSAB-Special?",
+    answer: [
+      "DASA and CSAB-Special 2026 shall have two rounds of seat allocation. Interested candidates must complete fresh registration, noting that all processes, including registration, choice filling/locking, seat allotment, and fee payment, differ from JoSAA procedures.",
+      "Document verification for DASA candidates shall be done prior to seat allotment. For CSAB candidates, document verification shall be done during the rounds.",
+    ],
+  },
+  {
+    question: "Does MHT-CET have any quota for OCI/NRI/CIWGC candidates for courses other than engineering?",
+    answer: [
+      "Yes. Maharashtra has a supernumerary quota for B.Tech, B.Arch, BBA, B.Pharma, B.Plan, B.Ed, BDS, BHMS, and many more courses.",
+    ],
+  },
+  {
+    question: "Is there an NRI quota in NIT?",
+    answer: [
+      "Yes. NITs (National Institutes of Technology) have an NRI quota. Admission is conducted through the DASA (Direct Admission of Students Abroad) scheme. Under this scheme, up to 15% of the total seats in undergraduate programs are reserved for NRIs, PIOs, OCIs, and Foreign Nationals.",
+    ],
+  },
+  {
+    question: "What is the NID B.Des eligibility for overseas candidates?",
+    answer: [
+      "Foreign candidates holding citizenship in a country other than the Republic of India are eligible to apply under the Overseas (supernumerary) category, provided they fulfil all eligibility requirements for the NID entrance exam mentioned in the official admissions handbook.",
+      "Candidates under the Overseas (supernumerary) category fall outside the seats reserved for GEN-EWS, OBC-NCL, SC, ST, and PwD categories. Such candidates cannot avail age relaxation, scribe, or similar facilities as per official eligibility information.",
+      "Candidates under the Overseas (supernumerary) category must apply and pay fees as per the Overseas fee structure. Candidates must possess a valid passport, and the passport must be current when applying online.",
+      "Non-Resident Indians (NRIs) holding an Indian passport are not eligible to apply under the Overseas (supernumerary) category and must apply as Indian nationals. Before commencement of the programme, the candidate is responsible for obtaining a student visa for the entire programme at NID.",
+    ],
+  },
+  {
+    question: "Are DASA and regular admission fees the same or different?",
+    answer: [
+      "The DASA fee is for applying through the foreign quota, so it is higher than other options. However, it offers the benefit of access to premier engineering colleges through the DASA route.",
+    ],
+  },
+];
+
+function FAQ({ isVisible }: { isVisible: boolean }) {
+  return (
+    <section id="faq" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-28 bg-background`}>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="max-w-3xl">
+          <div className="text-4xl sm:text-5xl md:text-6xl font-semibold text-gold-deep uppercase tracking-wider">FAQ</div>
+          <h2 className="mt-3 text-xl sm:text-2xl md:text-3xl font-semibold text-primary leading-tight">OCI, NRI, PIO and CIWG admission questions.</h2>
+          <p className="mt-4 text-base sm:text-lg text-muted-foreground">
+            Key questions families ask while planning Indian admissions under global Indian and foreign national categories.
+          </p>
+        </div>
+
+        <div className="mt-10 space-y-3">
+          {admissionFaqs.map((faq, index) => (
+            <details key={faq.question} className="card-reveal group rounded-2xl border border-border bg-card shadow-card open:shadow-elegant transition-shadow">
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-4 p-5 sm:p-6 text-left">
+                <span className="text-base sm:text-lg font-semibold text-primary">
+                  Q{index + 1}. {faq.question}
+                </span>
+                <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gold-deep transition-transform group-open:rotate-90" />
+              </summary>
+              <div className="px-5 pb-5 sm:px-6 sm:pb-6 space-y-3 text-sm sm:text-base leading-relaxed text-muted-foreground">
+                {faq.answer.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            </details>
+          ))}
         </div>
       </div>
     </section>
@@ -893,6 +1064,7 @@ function Index() {
       <Services isVisible={visibleSections.has("services")} />
       <Discovery isVisible={visibleSections.has("discovery")} />
       <Community isVisible={visibleSections.has("community")} />
+      <FAQ isVisible={visibleSections.has("faq")} />
       <Scholarships isVisible={visibleSections.has("scholarships")} />
       <Internships isVisible={visibleSections.has("internships")} />
       <About isVisible={visibleSections.has("about")} />

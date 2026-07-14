@@ -40,11 +40,11 @@ const sectionIds = [
   "services",
   "discovery",
   "community",
-  "faq",
   "scholarships",
   "internships",
   "about",
   "testimonials",
+  "faq",
   "contact",
 ] as const;
 
@@ -1064,11 +1064,11 @@ function Index() {
       <Services isVisible={visibleSections.has("services")} />
       <Discovery isVisible={visibleSections.has("discovery")} />
       <Community isVisible={visibleSections.has("community")} />
-      <FAQ isVisible={visibleSections.has("faq")} />
       <Scholarships isVisible={visibleSections.has("scholarships")} />
       <Internships isVisible={visibleSections.has("internships")} />
       <About isVisible={visibleSections.has("about")} />
       <Testimonials isVisible={visibleSections.has("testimonials")} />
+      <FAQ isVisible={visibleSections.has("faq")} />
       <Contact isVisible={visibleSections.has("contact")} socialLinks={socialLinks} />
       <Footer socialLinks={socialLinks} />
     </main>

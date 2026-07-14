@@ -300,12 +300,29 @@ function Community({ isVisible }: { isVisible: boolean }) {
     <section id="community" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-24 bg-surface`}>
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="card-reveal relative overflow-hidden rounded-2xl md:rounded-3xl bg-primary text-white shadow-elegant">
-          <div className="relative w-full aspect-[16/9] md:aspect-[21/9]">
+          <div className="relative w-full bg-white p-2 sm:p-3 outline outline-4 outline-red-500">
             <img
               src={futureReadyImg}
               alt="Career Craft Youth Future Ready Students Community infographic"
-              className="w-full h-full object-cover"
+              className="w-full h-auto rounded-xl outline outline-4 outline-blue-500"
               loading="lazy"
+              onLoad={(event) => {
+                const img = event.currentTarget;
+                console.log("[COMMUNITY_IMAGE_DEBUG]", {
+                  src: img.currentSrc,
+                  naturalWidth: img.naturalWidth,
+                  naturalHeight: img.naturalHeight,
+                  renderedWidth: img.clientWidth,
+                  renderedHeight: img.clientHeight,
+                  objectFit: getComputedStyle(img).objectFit,
+                  parentWidth: img.parentElement?.clientWidth,
+                  parentHeight: img.parentElement?.clientHeight,
+                  parentOverflow: img.parentElement ? getComputedStyle(img.parentElement).overflow : null,
+                });
+              }}
+              onError={() => {
+                console.error("[COMMUNITY_IMAGE_DEBUG] Failed to load future-ready image", futureReadyImg);
+              }}
             />
           </div>
           <div className="relative p-6 sm:p-8 md:p-12 text-center">

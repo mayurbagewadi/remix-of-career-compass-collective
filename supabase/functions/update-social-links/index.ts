@@ -20,11 +20,10 @@ Deno.serve(async (req) => {
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const adminEmail = Deno.env.get("ADMIN_EMAIL")?.toLowerCase();
   const authHeader = req.headers.get("Authorization");
   const token = authHeader?.replace("Bearer ", "");
 
-  if (!supabaseUrl || !supabaseAnonKey || !serviceRoleKey || !adminEmail) {
+  if (!supabaseUrl || !supabaseAnonKey || !serviceRoleKey) {
     return json({ error: "Server is missing required Supabase function secrets." }, 500);
   }
 
@@ -40,10 +39,6 @@ Deno.serve(async (req) => {
 
   if (userError || !userData.user?.email) {
     return json({ error: "Invalid admin session." }, 401);
-  }
-
-  if (userData.user.email.toLowerCase() !== adminEmail) {
-    return json({ error: "This account is not allowed to update social links." }, 403);
   }
 
   const body = await req.json().catch(() => null) as Partial<SocialLinks> | null;

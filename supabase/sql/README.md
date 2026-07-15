@@ -8,6 +8,7 @@ Recommended order:
 2. `002_contact_submission_policies.sql`
 3. `004_site_settings.sql`
 4. `005_blog_posts.sql`
+5. `006_testimonials.sql`
 
 Current admin setup uses Supabase Auth email check inside the `get-inquiries` Edge Function:
 

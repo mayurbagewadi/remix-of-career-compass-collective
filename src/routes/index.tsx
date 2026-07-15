@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, useRef, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import {
   Compass, Globe2, GraduationCap, Plane, Brain, Users, Award,
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
   Scale, Briefcase, Palette, Stethoscope, Cog, MessageCircle, Sparkles,
   Phone, Mail, MapPin, BookOpen, Wallet, Trophy, Landmark, BadgeCheck,
-  FileText, Lightbulb, ClipboardCheck, Quote, Star, ChevronLeft, ChevronRight,
+  FileText, Lightbulb, ClipboardCheck, Quote, Star, ChevronRight,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import counselorImg from "@/assets/counselor.png";
 import futureReadyImg from "@/assets/future-ready.jpg";
 import { getSupabaseClient } from "@/lib/supabase";
+import type { Testimonial } from "@/lib/testimonials";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -707,63 +708,28 @@ function About({ isVisible }: { isVisible: boolean }) {
 }
 
 function Testimonials({ isVisible }: { isVisible: boolean }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [publishedTestimonials, setPublishedTestimonials] = useState<Testimonial[]>([]);
+  const shouldAutoScroll = publishedTestimonials.length > 1;
 
-  const checkScroll = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  };
+  useEffect(() => {
+    let mounted = true;
 
-  const scroll = (dir: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const cardW = el.querySelector("div[data-card]")?.clientWidth ?? 380;
-    el.scrollBy({ left: dir === "left" ? -cardW - 24 : cardW + 24, behavior: "smooth" });
-    setTimeout(checkScroll, 350);
-  };
+    getSupabaseClient()
+      .from("testimonials")
+      .select("id, quote, name, role, rating, status, display_order, created_at, updated_at")
+      .eq("status", "published")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true })
+      .then(({ data }) => {
+        if (!mounted) return;
+        setPublishedTestimonials((data ?? []) as Testimonial[]);
+      })
+      .catch(() => undefined);
 
-  const testimonials = [
-    {
-      quote: "Career Craft Youth completely transformed how we approached our daughter's college applications. The psychometric test revealed strengths we never knew she had, and the admission strategy was spot-on.",
-      name: "Ananya Sharma",
-      role: "Parent of Grade 12 Student",
-      rating: 5,
-    },
-    {
-      quote: "I was confused between engineering and design. The stream discovery session gave me crystal-clear clarity. Today I'm studying at my dream design school — all thanks to Rupali ma'am.",
-      name: "Rohan Mehta",
-      role: "Student, Class 11",
-      rating: 5,
-    },
-    {
-      quote: "As an NRI parent, finding trustworthy guidance for Indian university admissions was stressful. The Global Indian Desk made the entire process seamless and transparent.",
-      name: "Priya Nair",
-      role: "Parent of OCI Student",
-      rating: 5,
-    },
-    {
-      quote: "The internship placement support helped me land a research role at a top lab. My college application stood out because I had real published work — not just grades.",
-      name: "Aditya Kapoor",
-      role: "Student, Class 12",
-      rating: 5,
-    },
-    {
-      quote: "What impressed me most was the personalized attention. They didn't just hand us a list of colleges — they built a complete roadmap tailored to my son's personality and goals.",
-      name: "Vikram Reddy",
-      role: "Parent of Grade 10 Student",
-      rating: 5,
-    },
-    {
-      quote: "The scholarship guidance alone saved us lakhs in tuition. They walked us through every form, every deadline, and every eligibility check. Truly life-changing support.",
-      name: "Sunita Patel",
-      role: "Parent of Grade 11 Student",
-      rating: 5,
-    },
-  ];
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <section id="testimonials" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-surface`}>
@@ -778,51 +744,40 @@ function Testimonials({ isVisible }: { isVisible: boolean }) {
               Real stories from parents and students whose futures we helped shape — one decision at a time.
             </p>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={() => scroll("left")}
-              disabled={!canScrollLeft}
-              className="w-11 h-11 rounded-full border border-border bg-card flex items-center justify-center hover:bg-accent transition disabled:opacity-30 disabled:cursor-not-allowed"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="w-5 h-5 text-primary" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              disabled={!canScrollRight}
-              className="w-11 h-11 rounded-full border border-border bg-card flex items-center justify-center hover:bg-accent transition disabled:opacity-30 disabled:cursor-not-allowed"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="w-5 h-5 text-primary" />
-            </button>
-          </div>
         </div>
 
-        <div
-          ref={scrollRef}
-          onScroll={checkScroll}
-          className="mt-10 md:mt-14 flex gap-4 md:gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {testimonials.map((t, i) => (
-            <div
-              key={i}
-              data-card
-              className="card-reveal group bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 shadow-card hover:shadow-elegant transition-all duration-300 flex flex-col min-w-[calc(100vw-2rem)] sm:min-w-[320px] md:min-w-[380px] max-w-[380px] snap-start"
-            >
-              <div className="flex items-center gap-1 mb-5">
-                {Array.from({ length: t.rating }).map((_, r) => (
-                  <Star key={r} className="w-4 h-4 fill-gold text-gold" />
-                ))}
-              </div>
-              <Quote className="w-8 h-8 text-gold/40 mb-4" />
-              <p className="text-foreground/85 leading-relaxed flex-1">{t.quote}</p>
-              <div className="mt-6 pt-6 border-t border-border">
-                <div className="font-semibold text-primary">{t.name}</div>
-                <div className="text-sm text-muted-foreground">{t.role}</div>
-              </div>
+        <div className="testimonial-marquee mt-10 md:mt-14 pb-4">
+          {publishedTestimonials.length === 0 ? (
+            <div className="w-full rounded-2xl border border-dashed border-border bg-card p-8 text-center text-muted-foreground">
+              No testimonials published yet.
             </div>
-          ))}
+          ) : (
+            <div className={`testimonial-marquee-track ${shouldAutoScroll ? "" : "testimonial-marquee-track-static"}`}>
+              {[0, 1].slice(0, shouldAutoScroll ? 2 : 1).map((setIndex) => (
+                <div key={setIndex} className="testimonial-marquee-set" aria-hidden={setIndex > 0}>
+                  {publishedTestimonials.map((t) => (
+                    <div
+                      key={`${t.id}-${setIndex}`}
+                      data-card
+                      className="card-reveal group bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 shadow-card hover:shadow-elegant transition-all duration-300 flex flex-col min-w-[calc(100vw-2rem)] sm:min-w-[320px] md:min-w-[380px] max-w-[380px]"
+                    >
+                      <div className="flex items-center gap-1 mb-5">
+                        {Array.from({ length: t.rating }).map((_, r) => (
+                          <Star key={r} className="w-4 h-4 fill-gold text-gold" />
+                        ))}
+                      </div>
+                      <Quote className="w-8 h-8 text-gold/40 mb-4" />
+                      <p className="text-foreground/85 leading-relaxed flex-1">{t.quote}</p>
+                      <div className="mt-6 pt-6 border-t border-border">
+                        <div className="font-semibold text-primary">{t.name}</div>
+                        <div className="text-sm text-muted-foreground">{t.role}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileText, GraduationCap, Info, LogOut, RefreshCw, Save, Share2, ShieldCheck } from "lucide-react";
+import { FileText, GraduationCap, Info, LogOut, MessageSquareText, RefreshCw, Save, Share2, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
 
 import { createSlug, formatBlogDate, type BlogPost, type BlogStatus } from "@/lib/blogs";
 import { getSupabaseClient } from "@/lib/supabase";
+import type { Testimonial, TestimonialStatus } from "@/lib/testimonials";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -59,6 +60,26 @@ const EMPTY_BLOG_FORM: BlogForm = {
   status: "draft",
 };
 
+type TestimonialForm = {
+  id: string;
+  quote: string;
+  name: string;
+  role: string;
+  rating: number;
+  status: TestimonialStatus;
+  display_order: number;
+};
+
+const EMPTY_TESTIMONIAL_FORM: TestimonialForm = {
+  id: "",
+  quote: "",
+  name: "",
+  role: "",
+  rating: 5,
+  status: "published",
+  display_order: 0,
+};
+
 function FieldHint({ text }: { text: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-xs font-medium normal-case tracking-normal text-muted-foreground">
@@ -71,7 +92,7 @@ function FieldHint({ text }: { text: string }) {
 function Admin() {
   const supabase = useMemo(() => getSupabaseClient(), []);
   const [session, setSession] = useState<Session | null>(null);
-  const [activeMenu, setActiveMenu] = useState<"students" | "social" | "blogs">("students");
+  const [activeMenu, setActiveMenu] = useState<"students" | "social" | "blogs" | "reviews">("students");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -79,6 +100,8 @@ function Admin() {
   const [socialLinks, setSocialLinks] = useState<SocialLinks>(EMPTY_SOCIAL_LINKS);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [blogForm, setBlogForm] = useState<BlogForm>(EMPTY_BLOG_FORM);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [testimonialForm, setTestimonialForm] = useState<TestimonialForm>(EMPTY_TESTIMONIAL_FORM);
   const [loading, setLoading] = useState(true);
   const [socialLoading, setSocialLoading] = useState(false);
   const [socialSaving, setSocialSaving] = useState(false);
@@ -86,6 +109,9 @@ function Admin() {
   const [blogsLoading, setBlogsLoading] = useState(false);
   const [blogSaving, setBlogSaving] = useState(false);
   const [blogStatus, setBlogStatus] = useState("");
+  const [testimonialsLoading, setTestimonialsLoading] = useState(false);
+  const [testimonialSaving, setTestimonialSaving] = useState(false);
+  const [testimonialStatus, setTestimonialStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -152,6 +178,27 @@ function Admin() {
 
     setBlogPosts((data ?? []) as BlogPost[]);
     setBlogsLoading(false);
+  };
+
+  const loadTestimonials = async () => {
+    setTestimonialsLoading(true);
+    setTestimonialStatus("");
+    setError("");
+
+    const { data, error: testimonialsError } = await supabase
+      .from("testimonials")
+      .select("id, quote, name, role, rating, status, display_order, created_at, updated_at")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (testimonialsError) {
+      setError(testimonialsError.message);
+      setTestimonialsLoading(false);
+      return;
+    }
+
+    setTestimonials((data ?? []) as Testimonial[]);
+    setTestimonialsLoading(false);
   };
 
   const handleSocialSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -237,6 +284,65 @@ function Admin() {
     await loadBlogs();
   };
 
+  const handleTestimonialSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setTestimonialSaving(true);
+    setTestimonialStatus("");
+    setError("");
+
+    const payload = {
+      quote: testimonialForm.quote.trim(),
+      name: testimonialForm.name.trim(),
+      role: testimonialForm.role.trim(),
+      rating: testimonialForm.rating,
+      status: testimonialForm.status,
+      display_order: testimonialForm.display_order,
+      updated_at: new Date().toISOString(),
+    };
+
+    const query = testimonialForm.id
+      ? supabase.from("testimonials").update(payload).eq("id", testimonialForm.id)
+      : supabase.from("testimonials").insert(payload);
+
+    const { error: saveError } = await query;
+
+    if (saveError) {
+      setError(saveError.message);
+      setTestimonialSaving(false);
+      return;
+    }
+
+    setTestimonialForm(EMPTY_TESTIMONIAL_FORM);
+    setTestimonialStatus("Review saved.");
+    setTestimonialSaving(false);
+    await loadTestimonials();
+  };
+
+  const editTestimonial = (testimonial: Testimonial) => {
+    setTestimonialForm({
+      id: testimonial.id,
+      quote: testimonial.quote,
+      name: testimonial.name,
+      role: testimonial.role,
+      rating: testimonial.rating,
+      status: testimonial.status,
+      display_order: testimonial.display_order,
+    });
+    setTestimonialStatus("");
+  };
+
+  const deleteTestimonial = async (testimonial: Testimonial) => {
+    if (!window.confirm(`Delete review from "${testimonial.name}"?`)) return;
+    setError("");
+    const { error: deleteError } = await supabase.from("testimonials").delete().eq("id", testimonial.id);
+    if (deleteError) {
+      setError(deleteError.message);
+      return;
+    }
+    if (testimonialForm.id === testimonial.id) setTestimonialForm(EMPTY_TESTIMONIAL_FORM);
+    await loadTestimonials();
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -273,6 +379,12 @@ function Admin() {
   useEffect(() => {
     if (session && activeMenu === "blogs") {
       void loadBlogs();
+    }
+  }, [session, activeMenu]);
+
+  useEffect(() => {
+    if (session && activeMenu === "reviews") {
+      void loadTestimonials();
     }
   }, [session, activeMenu]);
 
@@ -379,6 +491,7 @@ function Admin() {
               { id: "students", label: "Students", icon: GraduationCap },
               { id: "social", label: "Social Media", icon: Share2 },
               { id: "blogs", label: "Blogs", icon: FileText },
+              { id: "reviews", label: "Reviews", icon: MessageSquareText },
             ].map((item) => (
               <button
                 key={item.id}
@@ -411,12 +524,16 @@ function Admin() {
             <div>
               <div className="text-sm font-semibold uppercase tracking-wider text-gold-deep">Admin</div>
               <h2 className="mt-2 text-3xl font-semibold text-primary">
-                {activeMenu === "students" ? "Students" : activeMenu === "social" ? "Social Media" : "Blogs"}
+                {activeMenu === "students" ? "Students" : activeMenu === "social" ? "Social Media" : activeMenu === "blogs" ? "Blogs" : "Reviews"}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {activeMenu === "students"
                   ? "View submitted inquiries from the contact form."
-                  : "This section is ready for the next admin feature."}
+                  : activeMenu === "social"
+                    ? "Update public social profile links."
+                    : activeMenu === "blogs"
+                      ? "Create and manage website blog posts."
+                      : "Create and manage homepage reviews."}
               </p>
             </div>
             {activeMenu === "students" && (
@@ -539,7 +656,7 @@ function Admin() {
                 </button>
               </div>
             </form>
-          ) : (
+          ) : activeMenu === "blogs" ? (
             <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
               <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
                 <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -735,6 +852,195 @@ function Admin() {
                 >
                   <Save className="h-4 w-4" />
                   {blogSaving ? "Saving..." : "Save Blog"}
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+              <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+                <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 className="text-xl font-semibold text-primary">Reviews</h3>
+                    <p className="text-sm text-muted-foreground">Published reviews appear on the homepage testimonials section.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={loadTestimonials}
+                    disabled={testimonialsLoading}
+                    className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-background px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    {testimonialsLoading ? "Loading..." : "Reload"}
+                  </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[820px] border-collapse text-left text-sm">
+                    <thead className="bg-secondary text-xs uppercase tracking-wider text-muted-foreground">
+                      <tr>
+                        <th className="px-4 py-3 font-semibold">Review</th>
+                        <th className="px-4 py-3 font-semibold">Rating</th>
+                        <th className="px-4 py-3 font-semibold">Status</th>
+                        <th className="px-4 py-3 font-semibold">Order</th>
+                        <th className="px-4 py-3 font-semibold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {testimonialsLoading ? (
+                        <tr>
+                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={5}>Loading reviews...</td>
+                        </tr>
+                      ) : testimonials.length === 0 ? (
+                        <tr>
+                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={5}>No reviews yet.</td>
+                        </tr>
+                      ) : (
+                        testimonials.map((testimonial) => (
+                          <tr key={testimonial.id} className="border-t border-border align-top">
+                            <td className="px-4 py-4">
+                              <div className="font-medium text-primary">{testimonial.name}</div>
+                              <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+                              <div className="mt-2 max-w-md text-foreground/80">{testimonial.quote}</div>
+                            </td>
+                            <td className="px-4 py-4">{testimonial.rating}</td>
+                            <td className="px-4 py-4 capitalize">{testimonial.status}</td>
+                            <td className="px-4 py-4">{testimonial.display_order}</td>
+                            <td className="px-4 py-4">
+                              <div className="flex flex-wrap gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => editTestimonial(testimonial)}
+                                  className="rounded-md border border-border bg-background px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-accent"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => void deleteTestimonial(testimonial)}
+                                  className="rounded-md border border-destructive/30 bg-background px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <form onSubmit={handleTestimonialSubmit} className="rounded-lg border border-border bg-card p-5 shadow-card">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-primary">{testimonialForm.id ? "Edit Review" : "New Review"}</h3>
+                    <p className="text-sm text-muted-foreground">Write the review exactly as it should appear.</p>
+                  </div>
+                  {testimonialForm.id && (
+                    <button
+                      type="button"
+                      onClick={() => setTestimonialForm(EMPTY_TESTIMONIAL_FORM)}
+                      className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-primary hover:bg-accent"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                <div className="mt-5 grid gap-4">
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label htmlFor="review-name" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Name</label>
+                      <FieldHint text="Person shown below the review." />
+                    </div>
+                    <input
+                      id="review-name"
+                      value={testimonialForm.name}
+                      onChange={(e) => setTestimonialForm((prev) => ({ ...prev, name: e.target.value }))}
+                      required
+                      className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label htmlFor="review-role" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Role</label>
+                      <FieldHint text="Example: Parent of Grade 12 Student." />
+                    </div>
+                    <input
+                      id="review-role"
+                      value={testimonialForm.role}
+                      onChange={(e) => setTestimonialForm((prev) => ({ ...prev, role: e.target.value }))}
+                      required
+                      className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label htmlFor="review-quote" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Review</label>
+                      <FieldHint text="Main testimonial text." />
+                    </div>
+                    <textarea
+                      id="review-quote"
+                      rows={6}
+                      value={testimonialForm.quote}
+                      onChange={(e) => setTestimonialForm((prev) => ({ ...prev, quote: e.target.value }))}
+                      required
+                      className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="review-rating" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Rating</label>
+                      <input
+                        id="review-rating"
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={testimonialForm.rating}
+                        onChange={(e) => setTestimonialForm((prev) => ({ ...prev, rating: Number(e.target.value) }))}
+                        required
+                        className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="review-order" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Order</label>
+                      <input
+                        id="review-order"
+                        type="number"
+                        value={testimonialForm.display_order}
+                        onChange={(e) => setTestimonialForm((prev) => ({ ...prev, display_order: Number(e.target.value) }))}
+                        required
+                        className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label htmlFor="review-status" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Status</label>
+                      <FieldHint text="Draft is hidden. Published is visible on homepage." />
+                    </div>
+                    <select
+                      id="review-status"
+                      value={testimonialForm.status}
+                      onChange={(e) => setTestimonialForm((prev) => ({ ...prev, status: e.target.value as TestimonialStatus }))}
+                      className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                    </select>
+                  </div>
+                </div>
+
+                {testimonialStatus && <p className="mt-4 text-sm font-medium text-primary">{testimonialStatus}</p>}
+
+                <button
+                  type="submit"
+                  disabled={testimonialSaving}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-deep disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Save className="h-4 w-4" />
+                  {testimonialSaving ? "Saving..." : "Save Review"}
                 </button>
               </form>
             </div>

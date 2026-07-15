@@ -11,7 +11,7 @@ Private admin endpoint used by `/admin` to update landing-page social links.
 Required secrets:
 
 ```bash
-supabase secrets set ADMIN_EMAIL=counselrupali@gmail.com
+supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 Deploy:

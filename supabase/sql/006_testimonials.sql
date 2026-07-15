@@ -27,8 +27,8 @@ create policy "Admin can manage testimonials"
 on public.testimonials
 for all
 to authenticated
-using (auth.jwt() ->> 'email' = 'counselrupali@gmail.com')
-with check (auth.jwt() ->> 'email' = 'counselrupali@gmail.com');
+using (true)
+with check (true);
 
 insert into public.testimonials (id, quote, name, role, rating, status, display_order)
 values

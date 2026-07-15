@@ -9,11 +9,10 @@ Recommended order:
 3. `004_site_settings.sql`
 4. `005_blog_posts.sql`
 5. `006_testimonials.sql`
+6. `007_authenticated_admin_policies.sql`
 
-Current admin setup uses Supabase Auth email check inside the `get-inquiries` Edge Function:
+Current admin setup requires a valid Supabase Auth session for admin actions:
 
-- Allowed email: `counselrupali@gmail.com`
-- Required function secret: `ADMIN_EMAIL`
 - Required function secret: `SUPABASE_SERVICE_ROLE_KEY`
 
 `003_admin_users_optional.sql` is only for a future table-based admin model. It is not required for the current admin email setup.

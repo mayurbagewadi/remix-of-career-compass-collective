@@ -32,5 +32,5 @@ create policy "Admin can manage blog posts"
 on public.blog_posts
 for all
 to authenticated
-using (auth.jwt() ->> 'email' = 'counselrupali@gmail.com')
-with check (auth.jwt() ->> 'email' = 'counselrupali@gmail.com');
+using (true)
+with check (true);

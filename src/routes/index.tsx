@@ -259,7 +259,7 @@ function Discovery({ isVisible }: { isVisible: boolean }) {
           </p>
           <ul className="mt-8 space-y-3">
             {[
-              "60-minute deep psychometric battery",
+              "60-minute deep psychometric analysis",
               "30-page personalized career report",
               "1:1 debrief session with lead counselor",
               "Stream-fit, college-fit and career-fit mapping",

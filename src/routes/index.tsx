@@ -8,7 +8,6 @@ import {
   FileText, Lightbulb, ClipboardCheck, Quote, Star, ChevronRight,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
-import counselorImg from "@/assets/counselor.png";
 import futureReadyImg from "@/assets/future-ready.jpg";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Testimonial } from "@/lib/testimonials";
@@ -497,7 +496,7 @@ function FAQ({ isVisible }: { isVisible: boolean }) {
         </div>
 
         <div className="mt-10 space-y-3">
-          {admissionFaqs.map((faq, index) => (
+          {admissionFaqs.slice(0, 5).map((faq, index) => (
             <details key={faq.question} className="card-reveal group rounded-2xl border border-border bg-card shadow-card open:shadow-elegant transition-shadow">
               <summary className="flex cursor-pointer list-none items-start justify-between gap-4 p-5 sm:p-6 text-left">
                 <span className="text-base sm:text-lg font-semibold text-primary">
@@ -512,6 +511,11 @@ function FAQ({ isVisible }: { isVisible: boolean }) {
               </div>
             </details>
           ))}
+        </div>
+        <div className="mt-8 text-center">
+          <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+            Know More <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </section>
@@ -660,11 +664,7 @@ function About({ isVisible }: { isVisible: boolean }) {
 
         <div className="mt-10 md:mt-16 grid lg:grid-cols-2 gap-8 md:gap-10">
           <div className="card-reveal bg-surface border border-border rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-10 shadow-card">
-            <div className="relative aspect-[4/5] max-w-sm mx-auto lg:mx-0 overflow-hidden rounded-2xl bg-gradient-to-br from-accent via-surface to-secondary">
-              <div className="absolute inset-0 bg-gold-gradient opacity-10" />
-              <img src={counselorImg} alt="Rupali Rathore, Lead Career Counselor" className="relative w-full h-full object-contain object-bottom" loading="lazy" />
-            </div>
-            <div className="mt-7">
+            <div>
               <h3 className="text-2xl font-display font-semibold text-primary">Rupali Rathore</h3>
               <div className="text-sm font-medium text-gold-deep mt-1">Lead Career Counselor &amp; Founder</div>
               <blockquote className="mt-6 text-sm sm:text-base text-foreground/85 leading-relaxed border-l-2 border-gold pl-4 sm:pl-5 italic">

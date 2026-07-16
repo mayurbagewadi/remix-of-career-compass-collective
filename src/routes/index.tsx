@@ -496,11 +496,11 @@ function FAQ({ isVisible }: { isVisible: boolean }) {
         </div>
 
         <div className="mt-10 space-y-3">
-          {admissionFaqs.slice(0, 5).map((faq, index) => (
+          {admissionFaqs.slice(0, 5).map((faq) => (
             <details key={faq.question} className="card-reveal group rounded-2xl border border-border bg-card shadow-card open:shadow-elegant transition-shadow">
               <summary className="flex cursor-pointer list-none items-start justify-between gap-4 p-5 sm:p-6 text-left">
                 <span className="text-base sm:text-lg font-semibold text-primary">
-                  Q{index + 1}. {faq.question}
+                  {faq.question}
                 </span>
                 <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gold-deep transition-transform group-open:rotate-90" />
               </summary>

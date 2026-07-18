@@ -86,7 +86,7 @@ function Header({ activeSection, socialLinks }: { activeSection: string; socialL
             Career Craft <span className="text-gradient-gold">Youth</span>
           </span>
         </a>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-foreground/80">
+        <nav className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8 text-xs lg:text-sm font-medium text-foreground/80">
           {links.map(l => (
             <a
               key={l.href}
@@ -102,8 +102,8 @@ function Header({ activeSection, socialLinks }: { activeSection: string; socialL
             </a>
           ))}
         </nav>
-        <div className="hidden md:flex items-center gap-4">
-          <a href="#contact" className="inline-flex items-center gap-1.5 bg-gold-gradient text-gold-foreground px-5 py-2.5 rounded-md text-sm font-semibold shadow-gold hover:opacity-95 transition">
+        <div className="hidden md:flex shrink-0 items-center gap-6 pl-2">
+          <a href="#contact" className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap bg-gold-gradient text-gold-foreground px-5 py-2.5 rounded-md text-sm font-semibold shadow-gold hover:opacity-95 transition">
             Book Now <ArrowRight className="w-4 h-4" />
           </a>
         </div>

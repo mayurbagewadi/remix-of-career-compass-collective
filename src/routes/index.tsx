@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import futureReadyImg from "@/assets/future-ready.jpg";
+import type { LandingPhoto } from "@/lib/landing-photos";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Testimonial } from "@/lib/testimonials";
 
@@ -43,6 +44,7 @@ const sectionIds = [
   "scholarships",
   "internships",
   "about",
+  "photos",
   "testimonials",
   "faq",
   "contact",
@@ -57,6 +59,7 @@ function Header({ activeSection, socialLinks }: { activeSection: string; socialL
     { label: "Scholarships", href: "#scholarships" },
     { label: "Internships", href: "#internships" },
     { label: "About", href: "#about" },
+    { label: "Photos", href: "#photos" },
     { label: "Testimonials", href: "#testimonials" },
     { label: "Blogs", href: "/blogs" },
     { label: "Contact", href: "#contact" },
@@ -668,7 +671,7 @@ function About({ isVisible }: { isVisible: boolean }) {
               <h3 className="text-2xl font-display font-semibold text-primary">Rupali Rathore</h3>
               <div className="text-sm font-medium text-gold-deep mt-1">Lead Career Counselor &amp; Founder</div>
               <blockquote className="mt-6 text-sm sm:text-base text-foreground/85 leading-relaxed border-l-2 border-gold pl-4 sm:pl-5 italic">
-                “Every student deserves more than just a template for their future — they deserve a personalized compass. My mission is to deeply understand your unique strengths, reduce the overwhelming anxiety of admissions, and match you with the precise industry veterans who can unlock your dream career. We don’t just look at grades; we craft trajectories with empathy, clarity, and measurable results.”
+                “Every student deserves more than just a template for their future they deserve a personalized, strategic compass. My mission is to deeply understand your unique strengths, reduce the overwhelming anxiety of admissions, and match you with the precise industry veterans who can unlock your dream career. I specialize in navigating the complex web of OCI, NRI, and CIWG admissions, helping global Indian families secure seats in India's top colleges, central universities, and state-level institutions by leveraging government-mandated quotas and specialized entry pathways. We don’t just look at grades; we craft trajectories with empathy, clarity, and measurable results.”
               </blockquote>
             </div>
           </div>
@@ -778,6 +781,71 @@ function Testimonials({ isVisible }: { isVisible: boolean }) {
               ))}
             </div>
           )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LandingPhotos({ isVisible }: { isVisible: boolean }) {
+  const [publishedPhotos, setPublishedPhotos] = useState<LandingPhoto[]>([]);
+  const shouldAutoScroll = publishedPhotos.length > 1;
+
+  useEffect(() => {
+    let mounted = true;
+
+    getSupabaseClient()
+      .from("landing_page_photos")
+      .select("id, image_url, storage_path, alt_text, status, display_order, created_at, updated_at")
+      .eq("status", "published")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true })
+      .then(({ data }) => {
+        if (!mounted) return;
+        setPublishedPhotos((data ?? []) as LandingPhoto[]);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (publishedPhotos.length === 0) return null;
+
+  return (
+    <section id="photos" className={`section-pop ${isVisible || publishedPhotos.length > 0 ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="max-w-3xl">
+          <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Photos</div>
+          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">
+            Moments from <span className="italic text-gradient-gold">Career Craft Youth</span>.
+          </h2>
+          <p className="mt-4 text-base sm:text-lg text-muted-foreground">
+            A glimpse of our sessions, guidance work, and student community.
+          </p>
+        </div>
+
+        <div className="testimonial-marquee mt-10 md:mt-14 pb-4">
+          <div className={`testimonial-marquee-track ${shouldAutoScroll ? "" : "testimonial-marquee-track-static"}`}>
+            {[0, 1].slice(0, shouldAutoScroll ? 2 : 1).map((setIndex) => (
+              <div key={setIndex} className="testimonial-marquee-set" aria-hidden={setIndex > 0}>
+                {publishedPhotos.map((photo, index) => (
+                  <div
+                    key={`${photo.id}-${setIndex}`}
+                    className={`card-reveal overflow-hidden rounded-2xl border border-border bg-card shadow-card min-w-[calc(100vw-2rem)] sm:min-w-[420px] md:min-w-[520px] max-w-[520px] ${index % 3 === 1 ? "delay-100" : index % 3 === 2 ? "delay-200" : ""}`}
+                  >
+                    <img
+                      src={photo.image_url}
+                      alt={photo.alt_text ?? "Career Craft Youth photo"}
+                      className="aspect-[4/3] w-full bg-secondary object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -927,6 +995,7 @@ function Footer({ socialLinks }: { socialLinks: SocialLinks }) {
             <li><a href="#scholarships" className="hover:text-gold">Scholarships</a></li>
             <li><a href="#internships" className="hover:text-gold">Internships</a></li>
             <li><a href="#about" className="hover:text-gold">About</a></li>
+            <li><a href="#photos" className="hover:text-gold">Photos</a></li>
             <li><a href="#testimonials" className="hover:text-gold">Testimonials</a></li>
             <li><a href="#contact" className="hover:text-gold">Contact</a></li>
           </ul>
@@ -1022,6 +1091,7 @@ function Index() {
       <Scholarships isVisible={visibleSections.has("scholarships")} />
       <Internships isVisible={visibleSections.has("internships")} />
       <About isVisible={visibleSections.has("about")} />
+      <LandingPhotos isVisible={visibleSections.has("photos")} />
       <Testimonials isVisible={visibleSections.has("testimonials")} />
       <FAQ isVisible={visibleSections.has("faq")} />
       <Contact isVisible={visibleSections.has("contact")} socialLinks={socialLinks} />

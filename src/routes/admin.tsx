@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileText, GraduationCap, Info, LogOut, MessageSquareText, RefreshCw, Save, Share2, ShieldCheck } from "lucide-react";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { FileText, GraduationCap, ImageIcon, Info, LogOut, MessageSquareText, RefreshCw, Save, Share2, ShieldCheck, Upload } from "lucide-react";
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
 
 import { createSlug, formatBlogDate, type BlogPost, type BlogStatus } from "@/lib/blogs";
+import type { LandingPhoto, LandingPhotoStatus } from "@/lib/landing-photos";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Testimonial, TestimonialStatus } from "@/lib/testimonials";
 
@@ -80,6 +81,20 @@ const EMPTY_TESTIMONIAL_FORM: TestimonialForm = {
   display_order: 0,
 };
 
+type LandingPhotoForm = {
+  alt_text: string;
+  status: LandingPhotoStatus;
+  display_order: number;
+};
+
+const EMPTY_LANDING_PHOTO_FORM: LandingPhotoForm = {
+  alt_text: "",
+  status: "published",
+  display_order: 0,
+};
+
+const LANDING_PHOTO_BUCKET = "landing-page-photos";
+
 function FieldHint({ text }: { text: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-xs font-medium normal-case tracking-normal text-muted-foreground">
@@ -92,7 +107,7 @@ function FieldHint({ text }: { text: string }) {
 function Admin() {
   const supabase = useMemo(() => getSupabaseClient(), []);
   const [session, setSession] = useState<Session | null>(null);
-  const [activeMenu, setActiveMenu] = useState<"students" | "social" | "blogs" | "reviews">("students");
+  const [activeMenu, setActiveMenu] = useState<"students" | "social" | "blogs" | "photos" | "reviews">("students");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -100,6 +115,9 @@ function Admin() {
   const [socialLinks, setSocialLinks] = useState<SocialLinks>(EMPTY_SOCIAL_LINKS);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [blogForm, setBlogForm] = useState<BlogForm>(EMPTY_BLOG_FORM);
+  const [landingPhotos, setLandingPhotos] = useState<LandingPhoto[]>([]);
+  const [landingPhotoForm, setLandingPhotoForm] = useState<LandingPhotoForm>(EMPTY_LANDING_PHOTO_FORM);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [testimonialForm, setTestimonialForm] = useState<TestimonialForm>(EMPTY_TESTIMONIAL_FORM);
   const [loading, setLoading] = useState(true);
@@ -109,6 +127,9 @@ function Admin() {
   const [blogsLoading, setBlogsLoading] = useState(false);
   const [blogSaving, setBlogSaving] = useState(false);
   const [blogStatus, setBlogStatus] = useState("");
+  const [photosLoading, setPhotosLoading] = useState(false);
+  const [photosSaving, setPhotosSaving] = useState(false);
+  const [photoStatus, setPhotoStatus] = useState("");
   const [testimonialsLoading, setTestimonialsLoading] = useState(false);
   const [testimonialSaving, setTestimonialSaving] = useState(false);
   const [testimonialStatus, setTestimonialStatus] = useState("");
@@ -199,6 +220,27 @@ function Admin() {
 
     setTestimonials((data ?? []) as Testimonial[]);
     setTestimonialsLoading(false);
+  };
+
+  const loadLandingPhotos = async () => {
+    setPhotosLoading(true);
+    setPhotoStatus("");
+    setError("");
+
+    const { data, error: photosError } = await supabase
+      .from("landing_page_photos")
+      .select("id, image_url, storage_path, alt_text, status, display_order, created_at, updated_at")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (photosError) {
+      setError(photosError.message);
+      setPhotosLoading(false);
+      return;
+    }
+
+    setLandingPhotos((data ?? []) as LandingPhoto[]);
+    setPhotosLoading(false);
   };
 
   const handleSocialSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -343,6 +385,113 @@ function Admin() {
     await loadTestimonials();
   };
 
+  const handlePhotoFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPhotoFiles(Array.from(e.currentTarget.files ?? []));
+  };
+
+  const handleLandingPhotoSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (photoFiles.length === 0) {
+      setError("Choose at least one photo to upload.");
+      return;
+    }
+
+    setPhotosSaving(true);
+    setPhotoStatus("");
+    setError("");
+
+    const uploadedPhotos = [];
+
+    for (const [index, file] of photoFiles.entries()) {
+      if (!file.type.startsWith("image/")) {
+        setError(`${file.name} is not an image file.`);
+        setPhotosSaving(false);
+        return;
+      }
+
+      const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-+|-+$/g, "");
+      const storagePath = `landing/${crypto.randomUUID()}-${safeName}`;
+      const { error: uploadError } = await supabase.storage
+        .from(LANDING_PHOTO_BUCKET)
+        .upload(storagePath, file, {
+          cacheControl: "3600",
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        setError(uploadError.message);
+        setPhotosSaving(false);
+        return;
+      }
+
+      const { data: publicUrl } = supabase.storage
+        .from(LANDING_PHOTO_BUCKET)
+        .getPublicUrl(storagePath);
+
+      uploadedPhotos.push({
+        image_url: publicUrl.publicUrl,
+        storage_path: storagePath,
+        alt_text: landingPhotoForm.alt_text.trim() || null,
+        status: landingPhotoForm.status,
+        display_order: landingPhotoForm.display_order + index,
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    const { error: insertError } = await supabase.from("landing_page_photos").insert(uploadedPhotos);
+
+    if (insertError) {
+      setError(insertError.message);
+      setPhotosSaving(false);
+      return;
+    }
+
+    setLandingPhotoForm(EMPTY_LANDING_PHOTO_FORM);
+    setPhotoFiles([]);
+    setPhotoStatus("Photos uploaded.");
+    setPhotosSaving(false);
+    e.currentTarget.reset();
+    await loadLandingPhotos();
+  };
+
+  const updateLandingPhoto = async (photo: LandingPhoto, payload: Pick<LandingPhoto, "status" | "display_order">) => {
+    setError("");
+    const { error: updateError } = await supabase
+      .from("landing_page_photos")
+      .update({ ...payload, updated_at: new Date().toISOString() })
+      .eq("id", photo.id);
+
+    if (updateError) {
+      setError(updateError.message);
+      return;
+    }
+
+    await loadLandingPhotos();
+  };
+
+  const deleteLandingPhoto = async (photo: LandingPhoto) => {
+    if (!window.confirm("Delete this landing page photo?")) return;
+    setError("");
+
+    const { error: storageError } = await supabase.storage
+      .from(LANDING_PHOTO_BUCKET)
+      .remove([photo.storage_path]);
+
+    if (storageError) {
+      setError(storageError.message);
+      return;
+    }
+
+    const { error: deleteError } = await supabase.from("landing_page_photos").delete().eq("id", photo.id);
+    if (deleteError) {
+      setError(deleteError.message);
+      return;
+    }
+
+    await loadLandingPhotos();
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -385,6 +534,12 @@ function Admin() {
   useEffect(() => {
     if (session && activeMenu === "reviews") {
       void loadTestimonials();
+    }
+  }, [session, activeMenu]);
+
+  useEffect(() => {
+    if (session && activeMenu === "photos") {
+      void loadLandingPhotos();
     }
   }, [session, activeMenu]);
 
@@ -491,6 +646,7 @@ function Admin() {
               { id: "students", label: "Students", icon: GraduationCap },
               { id: "social", label: "Social Media", icon: Share2 },
               { id: "blogs", label: "Blogs", icon: FileText },
+              { id: "photos", label: "Photos", icon: ImageIcon },
               { id: "reviews", label: "Reviews", icon: MessageSquareText },
             ].map((item) => (
               <button
@@ -524,7 +680,7 @@ function Admin() {
             <div>
               <div className="text-sm font-semibold uppercase tracking-wider text-gold-deep">Admin</div>
               <h2 className="mt-2 text-3xl font-semibold text-primary">
-                {activeMenu === "students" ? "Students" : activeMenu === "social" ? "Social Media" : activeMenu === "blogs" ? "Blogs" : "Reviews"}
+                {activeMenu === "students" ? "Students" : activeMenu === "social" ? "Social Media" : activeMenu === "blogs" ? "Blogs" : activeMenu === "photos" ? "Photos" : "Reviews"}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {activeMenu === "students"
@@ -533,7 +689,9 @@ function Admin() {
                     ? "Update public social profile links."
                     : activeMenu === "blogs"
                       ? "Create and manage website blog posts."
-                      : "Create and manage homepage reviews."}
+                      : activeMenu === "photos"
+                        ? "Upload and manage landing page photos."
+                        : "Create and manage homepage reviews."}
               </p>
             </div>
             {activeMenu === "students" && (
@@ -852,6 +1010,172 @@ function Admin() {
                 >
                   <Save className="h-4 w-4" />
                   {blogSaving ? "Saving..." : "Save Blog"}
+                </button>
+              </form>
+            </div>
+          ) : activeMenu === "photos" ? (
+            <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+              <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+                <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 className="text-xl font-semibold text-primary">Landing Page Photos</h3>
+                    <p className="text-sm text-muted-foreground">Published photos appear in the homepage photo section.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={loadLandingPhotos}
+                    disabled={photosLoading}
+                    className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-background px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    {photosLoading ? "Loading..." : "Reload"}
+                  </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[820px] border-collapse text-left text-sm">
+                    <thead className="bg-secondary text-xs uppercase tracking-wider text-muted-foreground">
+                      <tr>
+                        <th className="px-4 py-3 font-semibold">Photo</th>
+                        <th className="px-4 py-3 font-semibold">Status</th>
+                        <th className="px-4 py-3 font-semibold">Order</th>
+                        <th className="px-4 py-3 font-semibold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {photosLoading ? (
+                        <tr>
+                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={4}>Loading photos...</td>
+                        </tr>
+                      ) : landingPhotos.length === 0 ? (
+                        <tr>
+                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={4}>No photos uploaded yet.</td>
+                        </tr>
+                      ) : (
+                        landingPhotos.map((photo) => (
+                          <tr key={photo.id} className="border-t border-border align-top">
+                            <td className="px-4 py-4">
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={photo.image_url}
+                                  alt={photo.alt_text ?? "Landing page photo"}
+                                  className="h-16 w-24 rounded-md object-cover"
+                                  loading="lazy"
+                                />
+                                <div>
+                                  <div className="font-medium text-primary">{photo.alt_text || "Landing page photo"}</div>
+                                  <div className="mt-1 max-w-xs truncate text-xs text-muted-foreground">{photo.storage_path}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <select
+                                value={photo.status}
+                                onChange={(e) => void updateLandingPhoto(photo, { status: e.target.value as LandingPhotoStatus, display_order: photo.display_order })}
+                                className="rounded-md border border-input bg-white px-3 py-2 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-primary/30"
+                              >
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                              </select>
+                            </td>
+                            <td className="px-4 py-4">
+                              <input
+                                type="number"
+                                value={photo.display_order}
+                                onChange={(e) => void updateLandingPhoto(photo, { status: photo.status, display_order: Number(e.target.value) })}
+                                className="w-24 rounded-md border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                              />
+                            </td>
+                            <td className="px-4 py-4">
+                              <button
+                                type="button"
+                                onClick={() => void deleteLandingPhoto(photo)}
+                                className="rounded-md border border-destructive/30 bg-background px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <form onSubmit={handleLandingPhotoSubmit} className="rounded-lg border border-border bg-card p-5 shadow-card">
+                <div>
+                  <h3 className="text-xl font-semibold text-primary">Upload Photos</h3>
+                  <p className="text-sm text-muted-foreground">Select one or more image files for the landing page.</p>
+                </div>
+
+                <div className="mt-5 grid gap-4">
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label htmlFor="landing-photo-files" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Photos</label>
+                      <FieldHint text="You can select multiple files." />
+                    </div>
+                    <input
+                      id="landing-photo-files"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handlePhotoFileChange}
+                      required
+                      className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                    {photoFiles.length > 0 && (
+                      <p className="mt-2 text-xs font-medium text-muted-foreground">{photoFiles.length} file{photoFiles.length === 1 ? "" : "s"} selected.</p>
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label htmlFor="landing-photo-alt" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Alt Text</label>
+                      <FieldHint text="Optional description for accessibility." />
+                    </div>
+                    <input
+                      id="landing-photo-alt"
+                      value={landingPhotoForm.alt_text}
+                      onChange={(e) => setLandingPhotoForm((prev) => ({ ...prev, alt_text: e.target.value }))}
+                      className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="landing-photo-status" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Status</label>
+                      <select
+                        id="landing-photo-status"
+                        value={landingPhotoForm.status}
+                        onChange={(e) => setLandingPhotoForm((prev) => ({ ...prev, status: e.target.value as LandingPhotoStatus }))}
+                        className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      >
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="landing-photo-order" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Starting Order</label>
+                      <input
+                        id="landing-photo-order"
+                        type="number"
+                        value={landingPhotoForm.display_order}
+                        onChange={(e) => setLandingPhotoForm((prev) => ({ ...prev, display_order: Number(e.target.value) }))}
+                        required
+                        className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {photoStatus && <p className="mt-4 text-sm font-medium text-primary">{photoStatus}</p>}
+
+                <button
+                  type="submit"
+                  disabled={photosSaving}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-deep disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Upload className="h-4 w-4" />
+                  {photosSaving ? "Uploading..." : "Upload Photos"}
                 </button>
               </form>
             </div>

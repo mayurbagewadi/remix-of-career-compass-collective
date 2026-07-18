@@ -815,12 +815,12 @@ function LandingPhotos({ isVisible }: { isVisible: boolean }) {
                 {publishedPhotos.map((photo, index) => (
                   <div
                     key={`${photo.id}-${setIndex}`}
-                    className={`card-reveal overflow-hidden rounded-2xl border border-border bg-card shadow-card min-w-[calc(100vw-2rem)] sm:min-w-[420px] md:min-w-[520px] max-w-[520px] ${index % 3 === 1 ? "delay-100" : index % 3 === 2 ? "delay-200" : ""}`}
+                    className={`card-reveal overflow-hidden rounded-2xl border border-border bg-card shadow-card min-w-[56vw] sm:min-w-[236px] md:min-w-[293px] max-w-[293px] ${index % 3 === 1 ? "delay-100" : index % 3 === 2 ? "delay-200" : ""}`}
                   >
                     <img
                       src={photo.image_url}
                       alt={photo.alt_text ?? "Career Craft Youth photo"}
-                      className="aspect-[4/3] w-full bg-secondary object-contain"
+                      className="h-[calc((100vw-2rem)*0.75)] w-full bg-secondary object-cover sm:h-[315px] md:h-[390px]"
                       loading="lazy"
                     />
                   </div>

@@ -639,23 +639,6 @@ function Internships({ isVisible }: { isVisible: boolean }) {
 }
 
 function About({ isVisible }: { isVisible: boolean }) {
-  const experts = [
-    {
-      icon: Globe2,
-      title: "The Global Indian Desk Specialist",
-      focus: "OCI / PIO / NRI / CIWG admissions, structural quotas, and seamless transitions to Indian universities.",
-    },
-    {
-      icon: Plane,
-      title: "STEM & Global Education Strategists",
-      focus: "Engineering, Medical and Study Abroad roadmap planning, profile-building, and Ivy / Tier-1 admission tactics.",
-    },
-    {
-      icon: Briefcase,
-      title: "Commerce, Law & Management Mentors",
-      focus: "BBA/MBA, Law and Design portfolio development, entrance exam strategies, and interview coaching.",
-    },
-  ];
   return (
     <section id="about" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -665,7 +648,7 @@ function About({ isVisible }: { isVisible: boolean }) {
           <p className="mt-4 text-base sm:text-lg text-muted-foreground">A personalized roadmap, driven by domain specialists.</p>
         </div>
 
-        <div className="mt-10 md:mt-16 grid lg:grid-cols-2 gap-8 md:gap-10">
+        <div className="mt-10 md:mt-16 max-w-3xl">
           <div className="card-reveal bg-surface border border-border rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-10 shadow-card">
             <div>
               <h3 className="text-2xl font-display font-semibold text-primary">Rupali Rathore</h3>
@@ -674,23 +657,6 @@ function About({ isVisible }: { isVisible: boolean }) {
                 “Every student deserves more than just a template for their future they deserve a personalized, strategic compass. My mission is to deeply understand your unique strengths, reduce the overwhelming anxiety of admissions, and match you with the precise industry veterans who can unlock your dream career. I specialize in navigating the complex web of OCI, NRI, and CIWG admissions, helping global Indian families secure seats in India's top colleges, central universities, and state-level institutions by leveraging government-mandated quotas and specialized entry pathways. We don’t just look at grades; we craft trajectories with empathy, clarity, and measurable results.”
               </blockquote>
             </div>
-          </div>
-
-          <div className="space-y-5">
-            <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">The Expert Panel</div>
-            {experts.map(e => (
-              <div key={e.title} className="card-reveal bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="grid place-items-center w-11 h-11 rounded-lg bg-primary shrink-0">
-                    <e.icon className="w-5 h-5 text-gold" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-lg text-primary">{e.title}</h4>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed"><span className="font-medium text-foreground/80">Focus:</span> {e.focus}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 

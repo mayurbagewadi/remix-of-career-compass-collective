@@ -3,12 +3,13 @@ import { useEffect, useState, type FormEvent } from "react";
 import {
   Compass, Globe2, GraduationCap, Plane, Brain, Users, Award,
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
-  Scale, Briefcase, Palette, Stethoscope, Cog, MessageCircle, Sparkles,
+  Scale, Briefcase, Palette, Stethoscope, Cog, Sparkles,
   Phone, Mail, MapPin, BookOpen, Wallet, Trophy, Landmark, BadgeCheck,
   FileText, Lightbulb, ClipboardCheck, Quote, Star, ChevronRight,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import futureReadyImg from "@/assets/future-ready.jpg";
+import whatsappIcon from "@/assets/whatsapp.png";
 import type { LandingPhoto } from "@/lib/landing-photos";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Testimonial } from "@/lib/testimonials";
@@ -336,13 +337,28 @@ function Community({ isVisible }: { isVisible: boolean }) {
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium">
                 <Users className="w-3.5 h-3.5 text-gold" /> Free Community
               </div>
-              <h2 className="mt-5 text-2xl sm:text-3xl md:text-4xl font-display font-semibold">Join the Inner Circle.</h2>
+              <h2 className="mt-5 text-2xl sm:text-3xl md:text-4xl font-display font-semibold">Join the WhatsApp Inner Circle.</h2>
               <p className="mt-4 text-white/80 leading-relaxed">
                 Real-time admission alerts, internships, new-age courses and expert tips — free, always.
               </p>
-              <a href="#contact" className="mt-8 inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
-                <MessageCircle className="w-5 h-5" /> Join on WhatsApp
-              </a>
+              <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3">
+                <a
+                  href="https://chat.whatsapp.com/EU3ISjqXNiTL7Oy5agzVK6?s=cl&p=a&ilr=1"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
+                >
+                  <img src={whatsappIcon} alt="" className="h-[26px] w-[26px]" /> OCI/NRI/CIWGC Group
+                </a>
+                <a
+                  href="https://chat.whatsapp.com/KucZY4GkO0sJsqLdu0PspM?s=cl&p=a&ilr=1"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-md border border-white/25 bg-white/10 px-6 py-3.5 font-semibold text-white transition hover:bg-white/15"
+                >
+                  <img src={whatsappIcon} alt="" className="h-[26px] w-[26px]" /> Std 5-12th Circle
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -640,7 +656,7 @@ function Internships({ isVisible }: { isVisible: boolean }) {
 
 function About({ isVisible }: { isVisible: boolean }) {
   return (
-    <section id="about" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
+    <section id="about" className={`section-pop ${isVisible ? "is-visible" : ""} pt-16 pb-8 sm:pt-20 sm:pb-10 md:pt-32 md:pb-16 bg-background`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-3xl">
           <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">About</div>
@@ -780,7 +796,7 @@ function LandingPhotos({ isVisible }: { isVisible: boolean }) {
   if (publishedPhotos.length === 0) return null;
 
   return (
-    <section id="photos" className={`section-pop ${isVisible || publishedPhotos.length > 0 ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
+    <section id="photos" className={`section-pop ${isVisible || publishedPhotos.length > 0 ? "is-visible" : ""} pt-8 pb-16 sm:pt-10 sm:pb-20 md:pt-16 md:pb-32 bg-background`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-3xl">
           <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Photos</div>

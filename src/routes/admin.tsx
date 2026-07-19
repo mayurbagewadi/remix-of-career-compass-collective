@@ -130,6 +130,8 @@ function Admin() {
   const [photosLoading, setPhotosLoading] = useState(false);
   const [photosSaving, setPhotosSaving] = useState(false);
   const [photoStatus, setPhotoStatus] = useState("");
+  const [photoPendingDelete, setPhotoPendingDelete] = useState<LandingPhoto | null>(null);
+  const [photoDeleting, setPhotoDeleting] = useState(false);
   const [testimonialsLoading, setTestimonialsLoading] = useState(false);
   const [testimonialSaving, setTestimonialSaving] = useState(false);
   const [testimonialStatus, setTestimonialStatus] = useState("");
@@ -471,7 +473,7 @@ function Admin() {
   };
 
   const deleteLandingPhoto = async (photo: LandingPhoto) => {
-    if (!window.confirm("Delete this landing page photo?")) return;
+    setPhotoDeleting(true);
     setError("");
 
     const { error: storageError } = await supabase.storage
@@ -480,15 +482,19 @@ function Admin() {
 
     if (storageError) {
       setError(storageError.message);
+      setPhotoDeleting(false);
       return;
     }
 
     const { error: deleteError } = await supabase.from("landing_page_photos").delete().eq("id", photo.id);
     if (deleteError) {
       setError(deleteError.message);
+      setPhotoDeleting(false);
       return;
     }
 
+    setPhotoPendingDelete(null);
+    setPhotoDeleting(false);
     await loadLandingPhotos();
   };
 
@@ -1032,14 +1038,71 @@ function Admin() {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="grid gap-3 p-4 xl:hidden">
+                  {photosLoading ? (
+                    <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">Loading photos...</div>
+                  ) : landingPhotos.length === 0 ? (
+                    <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">No photos uploaded yet.</div>
+                  ) : (
+                    landingPhotos.map((photo) => (
+                      <div key={photo.id} className="rounded-lg border border-border bg-background p-3">
+                        <div className="grid grid-cols-[92px_minmax(0,1fr)] gap-3">
+                          <img
+                            src={photo.image_url}
+                            alt={photo.alt_text ?? "Landing page photo"}
+                            className="h-[122px] w-[92px] rounded-md border border-border bg-white object-contain"
+                            loading="lazy"
+                          />
+                          <div className="min-w-0">
+                            <div className="text-base font-semibold leading-snug text-primary">{photo.alt_text || "Landing page photo"}</div>
+                            <div className="mt-2 inline-flex rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold capitalize text-muted-foreground">
+                              {photo.status}
+                            </div>
+                            <div className="mt-2 truncate text-xs text-muted-foreground">Order: {photo.display_order}</div>
+                          </div>
+                        </div>
+                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                          <div>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Status</label>
+                            <select
+                              value={photo.status}
+                              onChange={(e) => void updateLandingPhoto(photo, { status: e.target.value as LandingPhotoStatus, display_order: photo.display_order })}
+                              className="mt-1.5 w-full rounded-md border border-input bg-white px-3 py-2 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-primary/30"
+                            >
+                              <option value="draft">Draft</option>
+                              <option value="published">Published</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Order</label>
+                            <input
+                              type="number"
+                              value={photo.display_order}
+                              onChange={(e) => void updateLandingPhoto(photo, { status: photo.status, display_order: Number(e.target.value) })}
+                              className="mt-1.5 w-full rounded-md border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                            />
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setPhotoPendingDelete(photo)}
+                          className="mt-4 inline-flex w-full items-center justify-center rounded-md border border-destructive/30 bg-background px-3 py-2.5 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <div className="hidden overflow-x-auto xl:block">
                   <table className="w-full min-w-[820px] border-collapse text-left text-sm">
                     <thead className="bg-secondary text-xs uppercase tracking-wider text-muted-foreground">
                       <tr>
                         <th className="px-4 py-3 font-semibold">Photo</th>
                         <th className="px-4 py-3 font-semibold">Status</th>
                         <th className="px-4 py-3 font-semibold">Order</th>
-                        <th className="px-4 py-3 font-semibold">Actions</th>
+                        <th className="sticky right-0 bg-secondary px-4 py-3 font-semibold shadow-[-8px_0_16px_-12px_rgba(0,0,0,0.35)]">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1086,10 +1149,10 @@ function Admin() {
                                 className="w-24 rounded-md border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                               />
                             </td>
-                            <td className="px-4 py-4">
+                            <td className="sticky right-0 bg-card px-4 py-4 shadow-[-8px_0_16px_-12px_rgba(0,0,0,0.35)]">
                               <button
                                 type="button"
-                                onClick={() => void deleteLandingPhoto(photo)}
+                                onClick={() => setPhotoPendingDelete(photo)}
                                 className="rounded-md border border-destructive/30 bg-background px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
                               >
                                 Delete
@@ -1113,7 +1176,7 @@ function Admin() {
                   <div>
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label htmlFor="landing-photo-files" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Photos</label>
-                      <FieldHint text="You can select multiple files." />
+                      <FieldHint text="Recommended size: 293px x 390px. You can select multiple files." />
                     </div>
                     <input
                       id="landing-photo-files"
@@ -1178,6 +1241,44 @@ function Admin() {
                   {photosSaving ? "Uploading..." : "Upload Photos"}
                 </button>
               </form>
+
+              {photoPendingDelete && (
+                <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 px-4 py-6">
+                  <div className="w-full max-w-md rounded-lg border border-border bg-card p-5 shadow-elegant">
+                    <div className="flex items-start gap-4">
+                      <img
+                        src={photoPendingDelete.image_url}
+                        alt={photoPendingDelete.alt_text ?? "Landing page photo"}
+                        className="h-20 w-20 rounded-md object-cover"
+                      />
+                      <div>
+                        <h3 className="text-lg font-semibold text-primary">Delete photo?</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                          This will remove the photo from the landing page and storage. This action cannot be undone.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                      <button
+                        type="button"
+                        onClick={() => setPhotoPendingDelete(null)}
+                        disabled={photoDeleting}
+                        className="inline-flex items-center justify-center rounded-md border border-border bg-background px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void deleteLandingPhoto(photoPendingDelete)}
+                        disabled={photoDeleting}
+                        className="inline-flex items-center justify-center rounded-md bg-destructive px-4 py-2.5 text-sm font-semibold text-destructive-foreground transition hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {photoDeleting ? "Deleting..." : "Delete Photo"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">

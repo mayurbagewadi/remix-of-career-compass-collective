@@ -875,7 +875,7 @@ function Contact({ isVisible, socialLinks }: { isVisible: boolean; socialLinks: 
           <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-display font-semibold leading-tight">Let’s craft your trajectory.</h2>
           <p className="mt-5 text-white/80 text-base sm:text-lg max-w-md">Share a few details and our team will reach out within 24 hours to schedule your discovery call.</p>
           <div className="mt-10 space-y-4 text-white/80">
-            <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-gold" /><span>+91 — Available on request</span></div>
+            <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-gold" /><span>+917028162977 Available on request</span></div>
             <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /><span>career.craftyouth@gmail.com</span></div>
             <div className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /><span>India · Serving Global Indians worldwide</span></div>
           </div>

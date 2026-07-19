@@ -22,6 +22,16 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Career Craft Youth — Your Compass to a Successful Future" },
       { property: "og:description", content: "Personalized career counseling, study-abroad roadmaps, and admission strategy from a national award–recognized team." },
     ],
+    scripts: [
+      {
+        async: true,
+        src: "https://www.googletagmanager.com/gtag/js?id=G-2J84HVW2Z4",
+      },
+      {
+        children:
+          "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-2J84HVW2Z4');",
+      },
+    ],
   }),
   component: Index,
 });

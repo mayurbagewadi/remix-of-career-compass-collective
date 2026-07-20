@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileText, GraduationCap, ImageIcon, Info, LogOut, MessageSquareText, RefreshCw, Save, Share2, ShieldCheck, Upload } from "lucide-react";
+import { CircleHelp, FileText, GraduationCap, ImageIcon, Info, LogOut, MessageSquareText, RefreshCw, Save, Share2, ShieldCheck, Upload } from "lucide-react";
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
 
 import { createSlug, formatBlogDate, type BlogPost, type BlogStatus } from "@/lib/blogs";
+import type { FaqItem, FaqStatus } from "@/lib/faqs";
 import type { LandingPhoto, LandingPhotoStatus } from "@/lib/landing-photos";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Testimonial, TestimonialStatus } from "@/lib/testimonials";
@@ -81,6 +82,22 @@ const EMPTY_TESTIMONIAL_FORM: TestimonialForm = {
   display_order: 0,
 };
 
+type FaqForm = {
+  id: string;
+  question: string;
+  answer: string;
+  status: FaqStatus;
+  display_order: number;
+};
+
+const EMPTY_FAQ_FORM: FaqForm = {
+  id: "",
+  question: "",
+  answer: "",
+  status: "published",
+  display_order: 0,
+};
+
 type LandingPhotoForm = {
   alt_text: string;
   status: LandingPhotoStatus;
@@ -107,7 +124,7 @@ function FieldHint({ text }: { text: string }) {
 function Admin() {
   const supabase = useMemo(() => getSupabaseClient(), []);
   const [session, setSession] = useState<Session | null>(null);
-  const [activeMenu, setActiveMenu] = useState<"students" | "social" | "blogs" | "photos" | "reviews">("students");
+  const [activeMenu, setActiveMenu] = useState<"students" | "social" | "blogs" | "photos" | "reviews" | "faqs">("students");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -120,6 +137,8 @@ function Admin() {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [testimonialForm, setTestimonialForm] = useState<TestimonialForm>(EMPTY_TESTIMONIAL_FORM);
+  const [faqs, setFaqs] = useState<FaqItem[]>([]);
+  const [faqForm, setFaqForm] = useState<FaqForm>(EMPTY_FAQ_FORM);
   const [loading, setLoading] = useState(true);
   const [socialLoading, setSocialLoading] = useState(false);
   const [socialSaving, setSocialSaving] = useState(false);
@@ -135,6 +154,9 @@ function Admin() {
   const [testimonialsLoading, setTestimonialsLoading] = useState(false);
   const [testimonialSaving, setTestimonialSaving] = useState(false);
   const [testimonialStatus, setTestimonialStatus] = useState("");
+  const [faqsLoading, setFaqsLoading] = useState(false);
+  const [faqSaving, setFaqSaving] = useState(false);
+  const [faqStatus, setFaqStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -222,6 +244,27 @@ function Admin() {
 
     setTestimonials((data ?? []) as Testimonial[]);
     setTestimonialsLoading(false);
+  };
+
+  const loadFaqs = async () => {
+    setFaqsLoading(true);
+    setFaqStatus("");
+    setError("");
+
+    const { data, error: faqsError } = await supabase
+      .from("faqs")
+      .select("id, question, answer, status, display_order, created_at, updated_at")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (faqsError) {
+      setError(faqsError.message);
+      setFaqsLoading(false);
+      return;
+    }
+
+    setFaqs((data ?? []) as FaqItem[]);
+    setFaqsLoading(false);
   };
 
   const loadLandingPhotos = async () => {
@@ -387,6 +430,61 @@ function Admin() {
     await loadTestimonials();
   };
 
+  const handleFaqSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFaqSaving(true);
+    setFaqStatus("");
+    setError("");
+
+    const payload = {
+      question: faqForm.question.trim(),
+      answer: faqForm.answer.trim(),
+      status: faqForm.status,
+      display_order: faqForm.display_order,
+      updated_at: new Date().toISOString(),
+    };
+
+    const query = faqForm.id
+      ? supabase.from("faqs").update(payload).eq("id", faqForm.id)
+      : supabase.from("faqs").insert(payload);
+
+    const { error: saveError } = await query;
+
+    if (saveError) {
+      setError(saveError.message);
+      setFaqSaving(false);
+      return;
+    }
+
+    setFaqForm(EMPTY_FAQ_FORM);
+    setFaqStatus("FAQ saved.");
+    setFaqSaving(false);
+    await loadFaqs();
+  };
+
+  const editFaq = (faq: FaqItem) => {
+    setFaqForm({
+      id: faq.id,
+      question: faq.question,
+      answer: faq.answer,
+      status: faq.status,
+      display_order: faq.display_order,
+    });
+    setFaqStatus("");
+  };
+
+  const deleteFaq = async (faq: FaqItem) => {
+    if (!window.confirm(`Delete FAQ "${faq.question}"?`)) return;
+    setError("");
+    const { error: deleteError } = await supabase.from("faqs").delete().eq("id", faq.id);
+    if (deleteError) {
+      setError(deleteError.message);
+      return;
+    }
+    if (faqForm.id === faq.id) setFaqForm(EMPTY_FAQ_FORM);
+    await loadFaqs();
+  };
+
   const handlePhotoFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPhotoFiles(Array.from(e.currentTarget.files ?? []));
   };
@@ -544,6 +642,12 @@ function Admin() {
   }, [session, activeMenu]);
 
   useEffect(() => {
+    if (session && activeMenu === "faqs") {
+      void loadFaqs();
+    }
+  }, [session, activeMenu]);
+
+  useEffect(() => {
     if (session && activeMenu === "photos") {
       void loadLandingPhotos();
     }
@@ -653,6 +757,7 @@ function Admin() {
               { id: "social", label: "Social Media", icon: Share2 },
               { id: "blogs", label: "Blogs", icon: FileText },
               { id: "photos", label: "Photos", icon: ImageIcon },
+              { id: "faqs", label: "FAQ", icon: CircleHelp },
               { id: "reviews", label: "Reviews", icon: MessageSquareText },
             ].map((item) => (
               <button
@@ -686,7 +791,7 @@ function Admin() {
             <div>
               <div className="text-sm font-semibold uppercase tracking-wider text-gold-deep">Admin</div>
               <h2 className="mt-2 text-3xl font-semibold text-primary">
-                {activeMenu === "students" ? "Students" : activeMenu === "social" ? "Social Media" : activeMenu === "blogs" ? "Blogs" : activeMenu === "photos" ? "Photos" : "Reviews"}
+                {activeMenu === "students" ? "Students" : activeMenu === "social" ? "Social Media" : activeMenu === "blogs" ? "Blogs" : activeMenu === "photos" ? "Photos" : activeMenu === "faqs" ? "FAQ" : "Reviews"}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {activeMenu === "students"
@@ -697,7 +802,9 @@ function Admin() {
                       ? "Create and manage website blog posts."
                       : activeMenu === "photos"
                         ? "Upload and manage landing page photos."
-                        : "Create and manage homepage reviews."}
+                        : activeMenu === "faqs"
+                          ? "Create and manage homepage FAQ questions."
+                          : "Create and manage homepage reviews."}
               </p>
             </div>
             {activeMenu === "students" && (
@@ -839,57 +946,43 @@ function Admin() {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-                    <thead className="bg-secondary text-xs uppercase tracking-wider text-muted-foreground">
-                      <tr>
-                        <th className="px-4 py-3 font-semibold">Title</th>
-                        <th className="px-4 py-3 font-semibold">Status</th>
-                        <th className="px-4 py-3 font-semibold">Published</th>
-                        <th className="px-4 py-3 font-semibold">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {blogsLoading ? (
-                        <tr>
-                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={4}>Loading blogs...</td>
-                        </tr>
-                      ) : blogPosts.length === 0 ? (
-                        <tr>
-                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={4}>No blog posts yet.</td>
-                        </tr>
-                      ) : (
-                        blogPosts.map((post) => (
-                          <tr key={post.id} className="border-t border-border align-top">
-                            <td className="px-4 py-4">
-                              <div className="font-medium text-primary">{post.title}</div>
-                              <div className="mt-1 text-xs text-muted-foreground">/blogs/{post.slug}</div>
-                            </td>
-                            <td className="px-4 py-4 capitalize">{post.status}</td>
-                            <td className="px-4 py-4 text-muted-foreground">{formatBlogDate(post.published_at)}</td>
-                            <td className="px-4 py-4">
-                              <div className="flex flex-wrap gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => editBlog(post)}
-                                  className="rounded-md border border-border bg-background px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-accent"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => void deleteBlog(post)}
-                                  className="rounded-md border border-destructive/30 bg-background px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                <div className="grid gap-3 p-4">
+                  {blogsLoading ? (
+                    <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">Loading blogs...</div>
+                  ) : blogPosts.length === 0 ? (
+                    <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">No blog posts yet.</div>
+                  ) : (
+                    blogPosts.map((post) => (
+                      <article key={post.id} className="rounded-lg border border-border bg-background p-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <h4 className="break-words text-base font-semibold leading-snug text-primary">{post.title}</h4>
+                            <p className="mt-1 break-words text-xs text-muted-foreground">/blogs/{post.slug}</p>
+                          </div>
+                          <div className="flex shrink-0 flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
+                            <span className="rounded-full bg-secondary px-2.5 py-1 capitalize">{post.status}</span>
+                            <span className="rounded-full bg-secondary px-2.5 py-1">{formatBlogDate(post.published_at)}</span>
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => editBlog(post)}
+                            className="rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-accent"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void deleteBlog(post)}
+                            className="rounded-md border border-destructive/30 bg-card px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </article>
+                    ))
+                  )}
                 </div>
               </section>
 
@@ -1038,7 +1131,7 @@ function Admin() {
                   </button>
                 </div>
 
-                <div className="grid gap-3 p-4 xl:hidden">
+                <div className="grid gap-3 p-4">
                   {photosLoading ? (
                     <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">Loading photos...</div>
                   ) : landingPhotos.length === 0 ? (
@@ -1095,75 +1188,6 @@ function Admin() {
                   )}
                 </div>
 
-                <div className="hidden overflow-x-auto xl:block">
-                  <table className="w-full min-w-[820px] border-collapse text-left text-sm">
-                    <thead className="bg-secondary text-xs uppercase tracking-wider text-muted-foreground">
-                      <tr>
-                        <th className="px-4 py-3 font-semibold">Photo</th>
-                        <th className="px-4 py-3 font-semibold">Status</th>
-                        <th className="px-4 py-3 font-semibold">Order</th>
-                        <th className="sticky right-0 bg-secondary px-4 py-3 font-semibold shadow-[-8px_0_16px_-12px_rgba(0,0,0,0.35)]">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {photosLoading ? (
-                        <tr>
-                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={4}>Loading photos...</td>
-                        </tr>
-                      ) : landingPhotos.length === 0 ? (
-                        <tr>
-                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={4}>No photos uploaded yet.</td>
-                        </tr>
-                      ) : (
-                        landingPhotos.map((photo) => (
-                          <tr key={photo.id} className="border-t border-border align-top">
-                            <td className="px-4 py-4">
-                              <div className="flex items-center gap-3">
-                                <img
-                                  src={photo.image_url}
-                                  alt={photo.alt_text ?? "Landing page photo"}
-                                  className="h-16 w-24 rounded-md object-cover"
-                                  loading="lazy"
-                                />
-                                <div>
-                                  <div className="font-medium text-primary">{photo.alt_text || "Landing page photo"}</div>
-                                  <div className="mt-1 max-w-xs truncate text-xs text-muted-foreground">{photo.storage_path}</div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-4">
-                              <select
-                                value={photo.status}
-                                onChange={(e) => void updateLandingPhoto(photo, { status: e.target.value as LandingPhotoStatus, display_order: photo.display_order })}
-                                className="rounded-md border border-input bg-white px-3 py-2 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-primary/30"
-                              >
-                                <option value="draft">Draft</option>
-                                <option value="published">Published</option>
-                              </select>
-                            </td>
-                            <td className="px-4 py-4">
-                              <input
-                                type="number"
-                                value={photo.display_order}
-                                onChange={(e) => void updateLandingPhoto(photo, { status: photo.status, display_order: Number(e.target.value) })}
-                                className="w-24 rounded-md border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                              />
-                            </td>
-                            <td className="sticky right-0 bg-card px-4 py-4 shadow-[-8px_0_16px_-12px_rgba(0,0,0,0.35)]">
-                              <button
-                                type="button"
-                                onClick={() => setPhotoPendingDelete(photo)}
-                                className="rounded-md border border-destructive/30 bg-background px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
-                              >
-                                Delete
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
               </section>
 
               <form onSubmit={handleLandingPhotoSubmit} className="rounded-lg border border-border bg-card p-5 shadow-card">
@@ -1280,6 +1304,152 @@ function Admin() {
                 </div>
               )}
             </div>
+          ) : activeMenu === "faqs" ? (
+            <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+              <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+                <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 className="text-xl font-semibold text-primary">FAQ Questions</h3>
+                    <p className="text-sm text-muted-foreground">Published FAQs appear on the homepage FAQ section.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={loadFaqs}
+                    disabled={faqsLoading}
+                    className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-background px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    {faqsLoading ? "Loading..." : "Reload"}
+                  </button>
+                </div>
+
+                <div className="grid gap-3 p-4">
+                  {faqsLoading ? (
+                    <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">Loading FAQs...</div>
+                  ) : faqs.length === 0 ? (
+                    <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">No FAQs yet.</div>
+                  ) : (
+                    faqs.map((faq) => (
+                      <article key={faq.id} className="rounded-lg border border-border bg-background p-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <h4 className="break-words text-base font-semibold leading-snug text-primary">{faq.question}</h4>
+                            <p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed text-foreground/80">{faq.answer}</p>
+                          </div>
+                          <div className="flex shrink-0 flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
+                            <span className="rounded-full bg-secondary px-2.5 py-1 capitalize">{faq.status}</span>
+                            <span className="rounded-full bg-secondary px-2.5 py-1">Order {faq.display_order}</span>
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => editFaq(faq)}
+                            className="rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-accent"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void deleteFaq(faq)}
+                            className="rounded-md border border-destructive/30 bg-card px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </div>
+              </section>
+
+              <form onSubmit={handleFaqSubmit} className="rounded-lg border border-border bg-card p-5 shadow-card">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-primary">{faqForm.id ? "Edit FAQ" : "New FAQ"}</h3>
+                    <p className="text-sm text-muted-foreground">Write the question and answer exactly as they should appear.</p>
+                  </div>
+                  {faqForm.id && (
+                    <button
+                      type="button"
+                      onClick={() => setFaqForm(EMPTY_FAQ_FORM)}
+                      className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-primary hover:bg-accent"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                <div className="mt-5 grid gap-4">
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label htmlFor="faq-question" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Question</label>
+                      <FieldHint text="Main FAQ question shown on the homepage." />
+                    </div>
+                    <input
+                      id="faq-question"
+                      value={faqForm.question}
+                      onChange={(e) => setFaqForm((prev) => ({ ...prev, question: e.target.value }))}
+                      required
+                      className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label htmlFor="faq-answer" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Answer</label>
+                      <FieldHint text="Use blank lines to separate paragraphs." />
+                    </div>
+                    <textarea
+                      id="faq-answer"
+                      rows={8}
+                      value={faqForm.answer}
+                      onChange={(e) => setFaqForm((prev) => ({ ...prev, answer: e.target.value }))}
+                      required
+                      className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="faq-order" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Order</label>
+                      <input
+                        id="faq-order"
+                        type="number"
+                        value={faqForm.display_order}
+                        onChange={(e) => setFaqForm((prev) => ({ ...prev, display_order: Number(e.target.value) }))}
+                        required
+                        className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <label htmlFor="faq-status" className="text-xs font-semibold uppercase tracking-wider text-foreground/70">Status</label>
+                        <FieldHint text="Draft is hidden. Published is visible on homepage." />
+                      </div>
+                      <select
+                        id="faq-status"
+                        value={faqForm.status}
+                        onChange={(e) => setFaqForm((prev) => ({ ...prev, status: e.target.value as FaqStatus }))}
+                        className="mt-1.5 w-full rounded-md border border-input bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      >
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {faqStatus && <p className="mt-4 text-sm font-medium text-primary">{faqStatus}</p>}
+
+                <button
+                  type="submit"
+                  disabled={faqSaving}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-deep disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Save className="h-4 w-4" />
+                  {faqSaving ? "Saving..." : "Save FAQ"}
+                </button>
+              </form>
+            </div>
           ) : (
             <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
               <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
@@ -1299,60 +1469,45 @@ function Admin() {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[820px] border-collapse text-left text-sm">
-                    <thead className="bg-secondary text-xs uppercase tracking-wider text-muted-foreground">
-                      <tr>
-                        <th className="px-4 py-3 font-semibold">Review</th>
-                        <th className="px-4 py-3 font-semibold">Rating</th>
-                        <th className="px-4 py-3 font-semibold">Status</th>
-                        <th className="px-4 py-3 font-semibold">Order</th>
-                        <th className="px-4 py-3 font-semibold">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {testimonialsLoading ? (
-                        <tr>
-                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={5}>Loading reviews...</td>
-                        </tr>
-                      ) : testimonials.length === 0 ? (
-                        <tr>
-                          <td className="px-4 py-8 text-center text-muted-foreground" colSpan={5}>No reviews yet.</td>
-                        </tr>
-                      ) : (
-                        testimonials.map((testimonial) => (
-                          <tr key={testimonial.id} className="border-t border-border align-top">
-                            <td className="px-4 py-4">
-                              <div className="font-medium text-primary">{testimonial.name}</div>
-                              <div className="text-xs text-muted-foreground">{testimonial.role}</div>
-                              <div className="mt-2 max-w-md text-foreground/80">{testimonial.quote}</div>
-                            </td>
-                            <td className="px-4 py-4">{testimonial.rating}</td>
-                            <td className="px-4 py-4 capitalize">{testimonial.status}</td>
-                            <td className="px-4 py-4">{testimonial.display_order}</td>
-                            <td className="px-4 py-4">
-                              <div className="flex flex-wrap gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => editTestimonial(testimonial)}
-                                  className="rounded-md border border-border bg-background px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-accent"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => void deleteTestimonial(testimonial)}
-                                  className="rounded-md border border-destructive/30 bg-background px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                <div className="grid gap-3 p-4">
+                  {testimonialsLoading ? (
+                    <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">Loading reviews...</div>
+                  ) : testimonials.length === 0 ? (
+                    <div className="rounded-lg border border-border bg-background p-6 text-center text-sm text-muted-foreground">No reviews yet.</div>
+                  ) : (
+                    testimonials.map((testimonial) => (
+                      <article key={testimonial.id} className="rounded-lg border border-border bg-background p-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <h4 className="break-words text-base font-semibold leading-snug text-primary">{testimonial.name}</h4>
+                            <p className="mt-1 break-words text-xs text-muted-foreground">{testimonial.role}</p>
+                            <p className="mt-2 break-words text-sm leading-relaxed text-foreground/80">{testimonial.quote}</p>
+                          </div>
+                          <div className="flex shrink-0 flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
+                            <span className="rounded-full bg-secondary px-2.5 py-1">{testimonial.rating} Star</span>
+                            <span className="rounded-full bg-secondary px-2.5 py-1 capitalize">{testimonial.status}</span>
+                            <span className="rounded-full bg-secondary px-2.5 py-1">Order {testimonial.display_order}</span>
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => editTestimonial(testimonial)}
+                            className="rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-accent"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void deleteTestimonial(testimonial)}
+                            className="rounded-md border border-destructive/30 bg-card px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </article>
+                    ))
+                  )}
                 </div>
               </section>
 

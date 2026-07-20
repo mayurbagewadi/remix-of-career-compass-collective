@@ -10,6 +10,8 @@ Recommended order:
 4. `005_blog_posts.sql`
 5. `006_testimonials.sql`
 6. `007_authenticated_admin_policies.sql`
+7. `008_landing_page_photos.sql`
+8. `009_faqs.sql`
 
 Current admin setup requires a valid Supabase Auth session for admin actions:
 

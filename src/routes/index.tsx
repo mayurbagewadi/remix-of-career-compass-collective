@@ -10,6 +10,7 @@ import {
 import heroImg from "@/assets/hero.jpg";
 import futureReadyImg from "@/assets/future-ready.jpg";
 import whatsappIcon from "@/assets/whatsapp.png";
+import type { FaqItem } from "@/lib/faqs";
 import type { LandingPhoto } from "@/lib/landing-photos";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Testimonial } from "@/lib/testimonials";
@@ -513,6 +514,38 @@ const admissionFaqs = [
 ];
 
 function FAQ({ isVisible }: { isVisible: boolean }) {
+  const fallbackFaqs: FaqItem[] = admissionFaqs.slice(0, 5).map((faq) => ({
+    id: faq.question,
+    question: faq.question,
+    answer: faq.answer.join("\n\n"),
+    status: "published",
+    display_order: 0,
+    created_at: "",
+    updated_at: "",
+  }));
+  const [publishedFaqs, setPublishedFaqs] = useState<FaqItem[] | null>(null);
+  const displayFaqs = publishedFaqs ?? fallbackFaqs;
+
+  useEffect(() => {
+    let mounted = true;
+
+    getSupabaseClient()
+      .from("faqs")
+      .select("id, question, answer, status, display_order, created_at, updated_at")
+      .eq("status", "published")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true })
+      .then(({ data, error }) => {
+        if (!mounted || error) return;
+        setPublishedFaqs((data ?? []) as FaqItem[]);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <section id="faq" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-28 bg-background`}>
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
@@ -525,8 +558,8 @@ function FAQ({ isVisible }: { isVisible: boolean }) {
         </div>
 
         <div className="mt-10 space-y-3">
-          {admissionFaqs.slice(0, 5).map((faq) => (
-            <details key={faq.question} className="card-reveal group rounded-2xl border border-border bg-card shadow-card open:shadow-elegant transition-shadow">
+          {displayFaqs.map((faq) => (
+            <details key={faq.id} className="card-reveal group rounded-2xl border border-border bg-card shadow-card open:shadow-elegant transition-shadow">
               <summary className="flex cursor-pointer list-none items-start justify-between gap-4 p-5 sm:p-6 text-left">
                 <span className="text-base sm:text-lg font-semibold text-primary">
                   {faq.question}
@@ -534,7 +567,7 @@ function FAQ({ isVisible }: { isVisible: boolean }) {
                 <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gold-deep transition-transform group-open:rotate-90" />
               </summary>
               <div className="px-5 pb-5 sm:px-6 sm:pb-6 space-y-3 text-sm sm:text-base leading-relaxed text-muted-foreground">
-                {faq.answer.map((paragraph) => (
+                {faq.answer.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean).map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>

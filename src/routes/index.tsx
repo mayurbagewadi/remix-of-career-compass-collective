@@ -754,7 +754,7 @@ function Testimonials({ isVisible }: { isVisible: boolean }) {
                     <div
                       key={`${t.id}-${setIndex}`}
                       data-card
-                      className="card-reveal group bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 shadow-card hover:shadow-elegant transition-all duration-300 flex flex-col min-w-[calc(100vw-2rem)] sm:min-w-[320px] md:min-w-[380px] max-w-[380px]"
+                      className="card-reveal group bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 shadow-card hover:shadow-elegant transition-all duration-300 flex flex-col w-[calc(75vw-1.5rem)] min-w-[calc(75vw-1.5rem)] max-w-[calc(75vw-1.5rem)] sm:w-auto sm:min-w-[320px] sm:max-w-[380px] md:min-w-[380px]"
                     >
                       <div className="flex items-center gap-1 mb-5">
                         {Array.from({ length: t.rating }).map((_, r) => (

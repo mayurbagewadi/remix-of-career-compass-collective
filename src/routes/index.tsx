@@ -16,6 +16,7 @@ import type { FaqItem } from "@/lib/faqs";
 import type { LandingPhoto } from "@/lib/landing-photos";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Testimonial } from "@/lib/testimonials";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -66,6 +67,15 @@ const sectionIds = [
 
 function Header({ activeSection, socialLinks }: { activeSection: string; socialLinks: SocialLinks }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const links = [
     { label: "Services", href: "#services" },
     { label: "Discovery Tests", href: "#discovery" },
@@ -89,7 +99,7 @@ function Header({ activeSection, socialLinks }: { activeSection: string; socialL
           <span>Trusted by Parents | Driven by Science</span>
         </div>
       </div>
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/85 border-b border-border">
+      <header className={`sticky top-0 z-50 backdrop-blur-md bg-white/85 border-b transition-shadow duration-300 ${scrolled ? "border-border shadow-card" : "border-transparent"}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-18 md:h-[5rem] flex items-center justify-between py-3 md:py-4">
         <a href="#" className="flex items-center gap-2.5">
           <span className="grid place-items-center w-12 h-12 md:w-12 md:h-12 rounded-lg bg-hero-gradient shadow-elegant">
@@ -116,8 +126,8 @@ function Header({ activeSection, socialLinks }: { activeSection: string; socialL
           ))}
         </nav>
         <div className="hidden md:flex shrink-0 items-center gap-6 pl-2">
-          <a href="#contact" className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap bg-gold-gradient text-gold-foreground px-5 py-2.5 rounded-md text-sm font-semibold shadow-gold hover:opacity-95 transition">
-            Book Now <ArrowRight className="w-4 h-4" />
+          <a href="#contact" className="group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap bg-gold-gradient text-gold-foreground px-5 py-2.5 rounded-md text-sm font-semibold shadow-gold hover:opacity-95 transition">
+            Book Now <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
         <button onClick={() => setOpen(!open)} className="md:hidden min-w-12 min-h-12 grid place-items-center text-primary" aria-label="Menu">
@@ -169,8 +179,8 @@ function Hero() {
             Expert Psychometric Analysis and Strategic Admission Guidance for Students & Global Indians (OCI / NRI).
           </p>
           <div className="mt-8 md:mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
-            <a href="#contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 sm:px-7 py-3.5 sm:py-4 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
-              Schedule My Discovery Call <ArrowRight className="w-4 h-4" />
+            <a href="#contact" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 sm:px-7 py-3.5 sm:py-4 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+              Schedule My Discovery Call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a href="#services" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-md font-semibold border border-white/25 text-white hover:bg-white/10 transition">
               Explore Services
@@ -193,6 +203,19 @@ const services = [
     title: "The Global Indian Desk",
     badge: "Signature",
     desc: "Specialized OCI / PIO / NRI / CIWG India admission counselling — navigating structural quotas and seamless transitions.",
+    details: {
+      intro: "Navigating supernumerary quotas, DASA, SII, state portals, and specialized category documentation can be overwhelming for global Indian families.",
+      highlights: [
+        {
+          title: "Quota & Fee Optimization",
+          desc: "Strategic guidance to maximize seat allocation and leverage CIWG fee benefits.",
+        },
+        {
+          title: "Documentation & Compliance",
+          desc: "Complete documentation audits to ensure seamless eligibility for top engineering, medical, and management institutions in India.",
+        },
+      ],
+    },
   },
   {
     icon: GraduationCap,
@@ -207,6 +230,9 @@ const services = [
 ];
 
 function Services({ isVisible }: { isVisible: boolean }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const activeService = openIndex !== null ? services[openIndex] : null;
+
   return (
     <section id="services" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-surface`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -219,7 +245,7 @@ function Services({ isVisible }: { isVisible: boolean }) {
           {services.map((s, i) => (
             <div key={s.title} className={`card-reveal group relative bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-all duration-300 ${i === 1 ? "delay-100" : i === 2 ? "delay-200" : ""}`}>
               <div className="flex items-center justify-between">
-                <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary text-white">
+                <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary text-white transition-transform duration-300 group-hover:scale-110">
                   <s.icon className="w-6 h-6 text-gold" />
                 </div>
                 {s.badge && (
@@ -228,12 +254,48 @@ function Services({ isVisible }: { isVisible: boolean }) {
               </div>
               <h3 className="mt-6 text-xl font-semibold text-primary">{s.title}</h3>
               <p className="mt-3 text-muted-foreground leading-relaxed">{s.desc}</p>
-              <div className="mt-6 flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:text-gold-deep transition">
-                Learn more <ArrowRight className="w-4 h-4" />
-              </div>
+              {s.details && (
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(i)}
+                  className="mt-6 flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:text-gold-deep transition cursor-pointer"
+                >
+                  Learn more <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </button>
+              )}
             </div>
           ))}
         </div>
+
+        <Dialog open={activeService !== null} onOpenChange={(open) => !open && setOpenIndex(null)}>
+          <DialogContent className="max-w-lg">
+            {activeService?.details && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-primary font-display text-2xl">{activeService.title}</DialogTitle>
+                  <DialogDescription className="text-foreground/80 text-base leading-relaxed pt-2">
+                    {activeService.details.intro}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  {activeService.details.highlights.map((h) => (
+                    <div key={h.title} className="rounded-xl border border-border bg-card p-4">
+                      <div className="text-sm font-semibold text-gold-deep">{h.title}</div>
+                      <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{h.desc}</p>
+                    </div>
+                  ))}
+                </div>
+                <a
+                  href="#contact"
+                  onClick={() => setOpenIndex(null)}
+                  className="group inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
+                >
+                  Schedule My Discovery Call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </a>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
 
         <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {[
@@ -312,10 +374,10 @@ function Discovery({ isVisible }: { isVisible: boolean }) {
           ].map((card, i) => (
             <div
               key={card.title}
-              className={`card-reveal bg-card border border-border rounded-2xl overflow-hidden shadow-card ${i === 1 ? "delay-100" : i === 2 ? "delay-200" : ""}`}
+              className={`card-reveal group bg-card border border-border rounded-2xl overflow-hidden shadow-card hover:shadow-elegant hover:-translate-y-1 transition-all duration-300 ${i === 1 ? "delay-100" : i === 2 ? "delay-200" : ""}`}
             >
               <div className={`relative p-6 bg-gradient-to-br ${card.gradient}`}>
-                <div className="grid place-items-center w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm">
+                <div className="grid place-items-center w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
                   <card.icon className="w-5 h-5 text-white" />
                 </div>
                 <div className="mt-8 flex flex-wrap gap-2">
@@ -350,8 +412,8 @@ function Discovery({ isVisible }: { isVisible: boolean }) {
             </div>
           </div>
           <div className="text-center md:text-right shrink-0">
-            <a href="#contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
-              Unlock Your Child’s Career Blueprint <ArrowRight className="w-4 h-4" />
+            <a href="#contact" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+              Unlock Your Child’s Career Blueprint <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
             <div className="mt-2 flex items-center justify-center md:justify-end gap-1.5 text-xs text-white/60">
               <Sparkles className="w-3 h-3 text-gold" /> Limited early-bird slots available for this academic term.
@@ -626,8 +688,8 @@ function FAQ({ isVisible }: { isVisible: boolean }) {
           ))}
         </div>
         <div className="mt-8 text-center">
-          <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
-            Know More <ArrowRight className="w-4 h-4" />
+          <a href="#contact" className="group inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+            Know More <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
       </div>
@@ -651,9 +713,9 @@ function Scholarships({ isVisible }: { isVisible: boolean }) {
             href="https://scholarships.gov.in/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
+            className="group inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
           >
-            Explore Scholarships <ArrowRight className="w-4 h-4" />
+            Explore Scholarships <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </a>
           <a href="#contact" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
             Get Guidance
@@ -703,7 +765,7 @@ function Internships({ isVisible }: { isVisible: boolean }) {
         <div className="mt-10 md:mt-14 grid md:grid-cols-2 gap-5 md:gap-6">
           {cards.map((c, i) => (
             <div key={c.title} className={`card-reveal group flex items-start gap-4 sm:gap-5 bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow ${i % 2 === 1 ? "delay-100" : ""}`}>
-              <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary shrink-0">
+              <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary shrink-0 transition-transform duration-300 group-hover:scale-110">
                 <c.icon className="w-6 h-6 text-gold" />
               </div>
               <div>
@@ -714,8 +776,8 @@ function Internships({ isVisible }: { isVisible: boolean }) {
           ))}
         </div>
         <div className="mt-10 md:mt-12 flex flex-col sm:flex-row sm:flex-wrap gap-3">
-          <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
-            Get Started <ArrowRight className="w-4 h-4" />
+          <a href="#contact" className="group inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+            Get Started <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </a>
           <a href="#contact" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
             Ask About Opportunities
@@ -803,8 +865,8 @@ function About({ isVisible }: { isVisible: boolean }) {
               By blending modern psychometric analysis with the collective wisdom of seasoned academic and corporate mentors, we ensure our students get a massive competitive edge.
             </p>
           </div>
-          <a href="#contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
-            Schedule My Discovery Call <ArrowRight className="w-4 h-4" />
+          <a href="#contact" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+            Schedule My Discovery Call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
       </div>
@@ -1041,8 +1103,8 @@ function Contact({ isVisible, socialLinks }: { isVisible: boolean; socialLinks: 
                 {submitError && (
                   <p className="text-sm font-medium text-destructive">{submitError}</p>
                 )}
-                <button type="submit" disabled={submitting} className="w-full inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.01] transition-transform disabled:opacity-60 disabled:cursor-not-allowed">
-                  {submitting ? "Submitting..." : "Schedule My Discovery Call"} <ArrowRight className="w-4 h-4" />
+                <button type="submit" disabled={submitting} className="group w-full inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.01] transition-transform disabled:opacity-60 disabled:cursor-not-allowed">
+                  {submitting ? "Submitting..." : "Schedule My Discovery Call"} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
             </>
@@ -1122,6 +1184,35 @@ function Footer({ socialLinks }: { socialLinks: SocialLinks }) {
   );
 }
 
+function ScrollProgress() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - doc.clientHeight;
+      setProgress(scrollable > 0 ? (doc.scrollTop / scrollable) * 100 : 0);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <div className="fixed top-0 left-0 z-[60] h-[3px] w-full bg-transparent" aria-hidden="true">
+      <div className="h-full bg-gold-gradient transition-[width] duration-150 ease-out" style={{ width: `${progress}%` }} />
+    </div>
+  );
+}
+
 function Index() {
   const [activeSection, setActiveSection] = useState("");
   const [visibleSections, setVisibleSections] = useState<Set<string>>(() => new Set());
@@ -1185,6 +1276,7 @@ function Index() {
 
   return (
     <main className="min-h-screen bg-background">
+      <ScrollProgress />
       <Header activeSection={activeSection} socialLinks={socialLinks} />
       <Hero />
       <Services isVisible={visibleSections.has("services")} />

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import {
   Compass, Globe2, GraduationCap, Plane, Brain, Users, Award,
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
@@ -64,6 +64,17 @@ const sectionIds = [
   "faq",
   "contact",
 ] as const;
+
+function scrollToDiscoveryForm(e: MouseEvent<HTMLAnchorElement>) {
+  const form = document.getElementById("discovery-form");
+  if (!form) return;
+  e.preventDefault();
+  form.scrollIntoView({ behavior: "smooth", block: "center" });
+  form.classList.remove("form-highlight");
+  void form.offsetWidth;
+  form.classList.add("form-highlight");
+  window.setTimeout(() => form.classList.remove("form-highlight"), 1400);
+}
 
 function Header({ activeSection, socialLinks }: { activeSection: string; socialLinks: SocialLinks }) {
   const [open, setOpen] = useState(false);
@@ -179,7 +190,7 @@ function Hero() {
             Expert Psychometric Analysis and Strategic Admission Guidance for Students & Global Indians (OCI / NRI).
           </p>
           <div className="mt-8 md:mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
-            <a href="#contact" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 sm:px-7 py-3.5 sm:py-4 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+            <a href="#contact" onClick={scrollToDiscoveryForm} className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 sm:px-7 py-3.5 sm:py-4 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
               Schedule My Discovery Call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a href="#services" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-md font-semibold border border-white/25 text-white hover:bg-white/10 transition">
@@ -287,7 +298,10 @@ function Services({ isVisible }: { isVisible: boolean }) {
                 </div>
                 <a
                   href="#contact"
-                  onClick={() => setOpenIndex(null)}
+                  onClick={(e) => {
+                    setOpenIndex(null);
+                    scrollToDiscoveryForm(e);
+                  }}
                   className="group inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
                 >
                   Schedule My Discovery Call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -865,7 +879,7 @@ function About({ isVisible }: { isVisible: boolean }) {
               By blending modern psychometric analysis with the collective wisdom of seasoned academic and corporate mentors, we ensure our students get a massive competitive edge.
             </p>
           </div>
-          <a href="#contact" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+          <a href="#contact" onClick={scrollToDiscoveryForm} className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
             Schedule My Discovery Call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
@@ -1069,6 +1083,7 @@ function Contact({ isVisible, socialLinks }: { isVisible: boolean; socialLinks: 
         </div>
 
         <form
+          id="discovery-form"
           onSubmit={handleSubmit}
           className="card-reveal bg-white text-foreground rounded-2xl p-5 sm:p-6 md:p-10 shadow-elegant"
         >
@@ -1127,7 +1142,7 @@ function Field({ label, name, type = "text", placeholder, required }: { label: s
 
 function Footer({ socialLinks }: { socialLinks: SocialLinks }) {
   return (
-    <footer className="bg-primary-deep text-white/80">
+    <footer id="footer" className="bg-primary-deep text-white/80">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 md:py-16 grid md:grid-cols-4 gap-8 md:gap-10">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
@@ -1213,9 +1228,29 @@ function ScrollProgress() {
   );
 }
 
+function StickyDiscoveryCta({ hidden }: { hidden: boolean }) {
+  return (
+    <div
+      className={`fixed bottom-0 inset-x-0 z-40 px-4 pb-4 sm:pb-5 transition-transform duration-500 ease-out ${hidden ? "translate-y-[150%]" : "translate-y-0"}`}
+    >
+      <div className="mx-auto max-w-md">
+        <a
+          href="#contact"
+          onClick={scrollToDiscoveryForm}
+          className="group flex items-center justify-center gap-2 w-full bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-full font-semibold shadow-gold hover:scale-[1.03] transition-transform"
+        >
+          Schedule My Discovery Call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function Index() {
   const [activeSection, setActiveSection] = useState("");
   const [visibleSections, setVisibleSections] = useState<Set<string>>(() => new Set());
+  const [contactInView, setContactInView] = useState(false);
+  const [footerInView, setFooterInView] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLinks>(DEFAULT_SOCIAL_LINKS);
 
   useEffect(() => {
@@ -1251,6 +1286,15 @@ function Index() {
         if (visible?.target instanceof HTMLElement) {
           setActiveSection(visible.target.id);
         }
+        for (const entry of entries) {
+          if (!(entry.target instanceof HTMLElement)) continue;
+          if (entry.target.id === "contact") {
+            setContactInView(entry.isIntersecting);
+          }
+          if (entry.target.id === "footer") {
+            setFooterInView(entry.isIntersecting);
+          }
+        }
         setVisibleSections((prev) => {
           let next = prev;
           for (const entry of entries) {
@@ -1270,6 +1314,8 @@ function Index() {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
+    const footerEl = document.getElementById("footer");
+    if (footerEl) observer.observe(footerEl);
 
     return () => observer.disconnect();
   }, []);
@@ -1290,6 +1336,7 @@ function Index() {
       <FAQ isVisible={visibleSections.has("faq")} />
       <Contact isVisible={visibleSections.has("contact")} socialLinks={socialLinks} />
       <Footer socialLinks={socialLinks} />
+      <StickyDiscoveryCta hidden={contactInView || footerInView} />
     </main>
   );
 }

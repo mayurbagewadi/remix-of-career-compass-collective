@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Matter from "matter-js";
+import type Matter from "matter-js";
 
 type ShapeKind = "square" | "circle" | "triangle" | "diamond" | "pentagon" | "hexagon" | "star" | "cross";
 
@@ -72,79 +72,92 @@ export default function FallingShapes({
     const h = container.clientHeight;
     if (width <= 0 || h <= 0) return;
 
-    const { Engine, Runner, Bodies, World, Body, Mouse, MouseConstraint } = Matter;
-    const engine = Engine.create();
-    engine.world.gravity.y = gravity;
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
 
-    const boundary = { isStatic: true, render: { visible: false } };
-    const floor = Bodies.rectangle(width / 2, h + 25, width, 50, boundary);
-    const leftWall = Bodies.rectangle(-25, h / 2, 50, h * 2, boundary);
-    const rightWall = Bodies.rectangle(width + 25, h / 2, 50, h * 2, boundary);
+    import("matter-js").then((mod) => {
+      if (cancelled) return;
+      const MatterLib = (mod.default ?? mod) as typeof Matter;
+      const { Engine, Runner, Bodies, World, Body, Mouse, MouseConstraint } = MatterLib;
 
-    const elements = Array.from(container.querySelectorAll<HTMLElement>("[data-shape]"));
-    const bodies = elements.map((elem, i) => {
-      const piece = pieces[i];
-      const startX = (piece.startXPercent / 100) * width;
-      const startY = -40 - i * 26;
-      const body =
-        piece.kind === "circle"
-          ? Bodies.circle(startX, startY, piece.size / 2, { restitution: 0.7, friction: 0.3, frictionAir: 0.02 })
-          : Bodies.rectangle(startX, startY, piece.size, piece.size, { restitution: 0.7, friction: 0.3, frictionAir: 0.02 });
-      Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.12);
-      elem.style.position = "absolute";
-      elem.style.left = `${startX}px`;
-      elem.style.top = `${startY}px`;
-      elem.style.transform = "translate(-50%, -50%)";
-      return { elem, body };
-    });
+      const engine = Engine.create();
+      engine.world.gravity.y = gravity;
 
-    const mouse = Mouse.create(container);
+      const boundary = { isStatic: true, render: { visible: false } };
+      const floor = Bodies.rectangle(width / 2, h + 25, width, 50, boundary);
+      const leftWall = Bodies.rectangle(-25, h / 2, 50, h * 2, boundary);
+      const rightWall = Bodies.rectangle(width + 25, h / 2, 50, h * 2, boundary);
 
-    // Matter registers its own touch and wheel listeners that call
-    // preventDefault, which hijacks the page's ability to scroll (touch swipe
-    // or mouse wheel) anywhere over this section. We only want desktop
-    // mouse-drag interaction, so drop the listeners it just added for those.
-    container.removeEventListener("touchstart", mouse.mousedown);
-    container.removeEventListener("touchmove", mouse.mousemove);
-    container.removeEventListener("touchend", mouse.mouseup);
-    container.removeEventListener("wheel", mouse.mousewheel);
-
-    const mouseConstraint = MouseConstraint.create(engine, {
-      mouse,
-      constraint: { stiffness: 0.2, render: { visible: false } },
-    });
-
-    // If the mouse button is released outside this container (dragged fast
-    // past its edge), the container never sees the mouseup and the shape
-    // stays "stuck" to the cursor forever. Force-release on any window-level
-    // mouseup regardless of where it happened.
-    const forceRelease = () => {
-      mouse.button = -1;
-    };
-    window.addEventListener("mouseup", forceRelease);
-
-    World.add(engine.world, [floor, leftWall, rightWall, mouseConstraint, ...bodies.map((b) => b.body)]);
-
-    const runner = Runner.create();
-    Runner.run(runner, engine);
-
-    let frame: number;
-    const update = () => {
-      bodies.forEach(({ elem, body }) => {
-        elem.style.left = `${body.position.x}px`;
-        elem.style.top = `${body.position.y}px`;
-        elem.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
+      const elements = Array.from(container.querySelectorAll<HTMLElement>("[data-shape]"));
+      const bodies = elements.map((elem, i) => {
+        const piece = pieces[i];
+        const startX = (piece.startXPercent / 100) * width;
+        const startY = -40 - i * 26;
+        const body =
+          piece.kind === "circle"
+            ? Bodies.circle(startX, startY, piece.size / 2, { restitution: 0.7, friction: 0.3, frictionAir: 0.02 })
+            : Bodies.rectangle(startX, startY, piece.size, piece.size, { restitution: 0.7, friction: 0.3, frictionAir: 0.02 });
+        Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.12);
+        elem.style.position = "absolute";
+        elem.style.left = `${startX}px`;
+        elem.style.top = `${startY}px`;
+        elem.style.transform = "translate(-50%, -50%)";
+        return { elem, body };
       });
-      frame = requestAnimationFrame(update);
-    };
-    update();
+
+      const mouse = Mouse.create(container);
+
+      // Matter registers its own touch and wheel listeners that call
+      // preventDefault, which hijacks the page's ability to scroll (touch swipe
+      // or mouse wheel) anywhere over this section. We only want desktop
+      // mouse-drag interaction, so drop the listeners it just added for those.
+      container.removeEventListener("touchstart", mouse.mousedown);
+      container.removeEventListener("touchmove", mouse.mousemove);
+      container.removeEventListener("touchend", mouse.mouseup);
+      container.removeEventListener("wheel", mouse.mousewheel);
+
+      const mouseConstraint = MouseConstraint.create(engine, {
+        mouse,
+        constraint: { stiffness: 0.2, render: { visible: false } },
+      });
+
+      // If the mouse button is released outside this container (dragged fast
+      // past its edge), the container never sees the mouseup and the shape
+      // stays "stuck" to the cursor forever. Force-release on any window-level
+      // mouseup regardless of where it happened.
+      const forceRelease = () => {
+        mouse.button = -1;
+      };
+      window.addEventListener("mouseup", forceRelease);
+
+      World.add(engine.world, [floor, leftWall, rightWall, mouseConstraint, ...bodies.map((b) => b.body)]);
+
+      const runner = Runner.create();
+      Runner.run(runner, engine);
+
+      let frame: number;
+      const update = () => {
+        bodies.forEach(({ elem, body }) => {
+          elem.style.left = `${body.position.x}px`;
+          elem.style.top = `${body.position.y}px`;
+          elem.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
+        });
+        frame = requestAnimationFrame(update);
+      };
+      update();
+
+      cleanup = () => {
+        cancelAnimationFrame(frame);
+        window.removeEventListener("mouseup", forceRelease);
+        Runner.stop(runner);
+        World.clear(engine.world, false);
+        Engine.clear(engine);
+      };
+    });
 
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("mouseup", forceRelease);
-      Runner.stop(runner);
-      World.clear(engine.world, false);
-      Engine.clear(engine);
+      cancelled = true;
+      cleanup?.();
     };
   }, [started, gravity, pieces]);
 

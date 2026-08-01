@@ -233,11 +233,61 @@ const services = [
     icon: GraduationCap,
     title: "Professional Streams",
     desc: "Engineering, Medical, BBA/MBA, Law and Design — entrance strategy, profile-building and stream selection.",
+    details: {
+      intro: "Engineering, Medical, BBA/MBA, Law and Design — entrance strategy, profile-building and stream selection.",
+      highlights: [
+        {
+          title: "Streams Covered",
+          desc: "Engineering, Medical, Law, BBA/MBA, and Design.",
+        },
+        {
+          title: "Entrance Strategy & Exam Guidance",
+          desc: "Comprehensive planning and preparation strategies for national and state-level entrance exams (e.g., JEE, NEET, CLAT, IPMAT, NATA/NID).",
+        },
+        {
+          title: "Stream & Specialization Selection",
+          desc: "Tailored guidance to help students identify and choose the right academic branch based on their strengths, aptitude, and long-term career goals.",
+        },
+        {
+          title: "Profile Building & Mentorship",
+          desc: "Step-by-step support to build a competitive student profile through internships, certifications, and skill development prior to university admissions.",
+        },
+        {
+          title: "End-to-End Admission Support",
+          desc: "Guidance through application processes, college shortlisting, cut-off analysis, and seat acceptance strategies.",
+        },
+      ],
+    },
   },
   {
     icon: Plane,
     title: "Global Education",
     desc: "Dedicated Study Abroad roadmap — Ivy / Tier-1 admission tactics, SOPs, and university shortlisting.",
+    details: {
+      intro: "Dedicated Study Abroad roadmap — Ivy / Tier-1 admission tactics, SOPs, and university shortlisting.",
+      highlights: [
+        {
+          title: "Target Destinations",
+          desc: "Ivy League & Tier-1 Universities in the US, UK, Canada, Europe, Australia, and Singapore.",
+        },
+        {
+          title: "University Shortlisting & Strategy",
+          desc: "Data-backed selection of universities aligned with academic goals, budget, safety, and long-term career outcomes.",
+        },
+        {
+          title: "SOP & Essay Guidance",
+          desc: "Crafting compelling Statements of Purpose (SOP), Personal Statements, and Supplemental Essays that stand out to admissions committees.",
+        },
+        {
+          title: "Profile & Application Enhancement",
+          desc: "Strategic guidance on extra-curriculars, research papers, recommendations (LORs), and test planning (SAT/ACT, GRE/GMAT, IELTS/TOEFL).",
+        },
+        {
+          title: "Financial Planning & Scholarships",
+          desc: "Our team assists with merit/need-based scholarship applications, financial documentation, and visa interview preparation.",
+        },
+      ],
+    },
   },
 ];
 
@@ -280,7 +330,7 @@ function Services({ isVisible }: { isVisible: boolean }) {
         </div>
 
         <Dialog open={activeService !== null} onOpenChange={(open) => !open && setOpenIndex(null)}>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             {activeService?.details && (
               <>
                 <DialogHeader>

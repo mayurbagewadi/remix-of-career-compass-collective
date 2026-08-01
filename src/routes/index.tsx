@@ -6,9 +6,11 @@ import {
   Scale, Briefcase, Palette, Stethoscope, Cog, Sparkles,
   Phone, Mail, MapPin, BookOpen, Wallet, Trophy, Landmark, BadgeCheck,
   FileText, Lightbulb, ClipboardCheck, Quote, Star, ChevronRight,
+  Shuffle, Atom, Puzzle, Eye, Ear, PenLine, Move,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import futureReadyImg from "@/assets/future-ready.jpg";
+import counselorImg from "@/assets/counselor.jpg";
 import whatsappIcon from "@/assets/whatsapp.png";
 import type { FaqItem } from "@/lib/faqs";
 import type { LandingPhoto } from "@/lib/landing-photos";
@@ -154,13 +156,13 @@ function Hero() {
         <img src={heroImg} alt="" className="w-full h-full object-cover" />
       </div>
       <div className="absolute inset-0 bg-gradient-to-r from-primary-deep via-primary/80 to-primary/40" />
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20 md:py-32 grid md:grid-cols-12 gap-10 items-center">
-        <div className="md:col-span-7">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20 md:py-32">
+        <div className="max-w-3xl lg:max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium text-white/90 backdrop-blur-sm">
             <Award className="w-3.5 h-3.5 text-gold" />
             Trusted by Parents | Driven by Science
           </div>
-          <h1 className="mt-6 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.08]">
+          <h1 className="mt-6 font-display text-4xl sm:text-5xl md:text-6xl lg:text-6xl lg:whitespace-nowrap font-semibold leading-[1.08]">
             Your Compass to a <span className="inline-block px-1 text-gold tracking-normal">Successful</span> Future.
           </h1>
           <p className="mt-5 md:mt-6 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
@@ -178,11 +180,6 @@ function Hero() {
             <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-gold" /> 1:1 Personalized Mentorship</div>
             <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-gold" /> Industry Veteran Panel</div>
             <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-gold" /> Global Indian Desk</div>
-          </div>
-        </div>
-        <div className="hidden md:block md:col-span-5">
-          <div className="relative aspect-square rounded-2xl bg-white/5 border border-white/15 backdrop-blur-sm p-8 shadow-elegant">
-            <Compass className="w-full h-full text-gold/80" strokeWidth={0.8} />
           </div>
         </div>
       </div>
@@ -263,47 +260,101 @@ function Services({ isVisible }: { isVisible: boolean }) {
 function Discovery({ isVisible }: { isVisible: boolean }) {
   return (
     <section id="discovery" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-2 gap-10 md:gap-12 items-center">
-        <div>
-          <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Discovery Tests</div>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 text-sm font-semibold text-gold-deep uppercase tracking-wider">
+            <Sparkles className="w-4 h-4" /> Discovery Tests &amp; Psychometric Profiling
+          </div>
           <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">
-            8th–12th Grade <span className="italic text-gradient-gold">Stream Discovery</span>.
+            8th&ndash;12th Grade <span className="italic text-gradient-gold">Stream &amp; Career Discovery</span>.
           </h2>
           <p className="mt-5 text-muted-foreground text-base sm:text-lg leading-relaxed">
-            A scientifically-validated psychometric analysis that maps aptitude, personality and interest to the right academic stream — long before the pressure of decisions hits.
+            Using globally validated psychometric tools, we decode your child’s natural strengths, personality, and learning style long before high-stakes decision windows arrive.
           </p>
-          <ul className="mt-8 space-y-3">
-            {[
-              "60-minute deep psychometric analysis",
-              "30-page personalized career report",
-              "1:1 debrief session with lead counselor",
-              "Stream-fit, college-fit and career-fit mapping",
-            ].map(t => (
-              <li key={t} className="flex items-start gap-3 text-foreground/85">
-                <CheckCircle2 className="w-5 h-5 text-gold-deep mt-0.5 shrink-0" />
-                <span>{t}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-8 md:mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3">
-            <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-deep transition">
-              Learn More <ArrowRight className="w-4 h-4" />
-            </a>
-            <span className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md border border-dashed border-gold text-gold-deep text-sm font-medium">
-              <Sparkles className="w-4 h-4" /> Early-bird pricing &amp; offers — ask us
-            </span>
-          </div>
         </div>
-        <div className="card-reveal delay-150 relative">
-          <div className="absolute -inset-6 bg-gold-gradient opacity-20 blur-3xl rounded-full" />
-          <div className="relative bg-hero-gradient rounded-3xl p-6 sm:p-8 md:p-10 text-white shadow-elegant">
-            <Brain className="w-12 h-12 text-gold" />
-            <div className="mt-6 text-sm uppercase tracking-wider text-white/60">Psychometric Analysis</div>
-            <div className="mt-2 text-2xl sm:text-3xl font-display font-semibold">Clarity, not guesswork.</div>
-            <div className="mt-8 grid grid-cols-3 gap-2 sm:gap-4 pt-8 border-t border-white/15">
-              <div><div className="text-2xl sm:text-3xl font-semibold text-gold">12+</div><div className="text-xs text-white/70 mt-1">Aptitude domains</div></div>
-              <div><div className="text-2xl sm:text-3xl font-semibold text-gold">30pg</div><div className="text-xs text-white/70 mt-1">Report</div></div>
-              <div><div className="text-2xl sm:text-3xl font-semibold text-gold">1:1</div><div className="text-xs text-white/70 mt-1">Debrief</div></div>
+
+        <div className="mt-10 md:mt-14 grid md:grid-cols-3 gap-5 md:gap-6">
+          {[
+            {
+              gradient: "from-violet-500 via-purple-500 to-fuchsia-500",
+              icon: Shuffle,
+              tags: [
+                { label: "Science", icon: Atom, className: "bg-emerald-500" },
+                { label: "Commerce", icon: Wallet, className: "bg-amber-500" },
+                { label: "Humanities", icon: BookOpen, className: "bg-rose-500" },
+              ],
+              title: "Data-Backed Stream Selection",
+              desc: "Eliminate guessing games. We map your child’s core aptitude across Science, Commerce, and Humanities to find the stream where they will naturally excel and stay motivated.",
+            },
+            {
+              gradient: "from-cyan-400 via-sky-500 to-teal-500",
+              icon: Brain,
+              tags: [
+                { label: "RIASEC", icon: Compass, className: "bg-blue-500" },
+                { label: "MBTI", icon: Puzzle, className: "bg-purple-500" },
+                { label: "Gardner", icon: Trophy, className: "bg-amber-500" },
+              ],
+              title: "360° Personality & Aptitude Analysis",
+              desc: "Built on world-renowned psychometric frameworks (Holland Code RIASEC, MBTI, & Gardner’s Intelligences) to uncover hidden talents, problem-solving styles, and ideal work environments.",
+            },
+            {
+              gradient: "from-orange-400 via-orange-500 to-amber-500",
+              icon: Lightbulb,
+              tags: [
+                { label: "Visual", icon: Eye, className: "bg-sky-500" },
+                { label: "Auditory", icon: Ear, className: "bg-pink-500" },
+                { label: "R/W", icon: PenLine, className: "bg-emerald-500" },
+                { label: "Kinetic", icon: Move, className: "bg-orange-500" },
+              ],
+              title: "Tailored Learning & Study Strategies",
+              desc: "Discover how your child absorbs and processes information best using VARK modalities. Boost focus, reduce exam stress, and improve academic performance instantly.",
+            },
+          ].map((card, i) => (
+            <div
+              key={card.title}
+              className={`card-reveal bg-card border border-border rounded-2xl overflow-hidden shadow-card ${i === 1 ? "delay-100" : i === 2 ? "delay-200" : ""}`}
+            >
+              <div className={`relative p-6 bg-gradient-to-br ${card.gradient}`}>
+                <div className="grid place-items-center w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm">
+                  <card.icon className="w-5 h-5 text-white" />
+                </div>
+                <div className="mt-8 flex flex-wrap gap-2">
+                  {card.tags.map((tag) => (
+                    <span key={tag.label} className={`inline-flex items-center gap-1 ${tag.className} text-white text-[11px] font-semibold px-2.5 py-1 rounded-full`}>
+                      <tag.icon className="w-3 h-3" /> {tag.label.toUpperCase()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="p-5 sm:p-6">
+                <h3 className="text-lg font-semibold text-primary">{card.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="card-reveal mt-8 md:mt-10 rounded-2xl bg-primary text-white p-6 sm:p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-gold">What You Receive</div>
+            <div className="mt-3 flex flex-col sm:flex-row sm:flex-wrap gap-x-8 gap-y-3">
+              {[
+                "60-Minute Deep Psychometric Assessment",
+                "30-Page Comprehensive Personal Profiling Report",
+                "1-on-1 Strategic Debrief Session with Lead Counsellor",
+              ].map((t) => (
+                <div key={t} className="flex items-center gap-2 text-sm text-white/90">
+                  <BadgeCheck className="w-4 h-4 text-gold shrink-0" /> {t}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="text-center md:text-right shrink-0">
+            <a href="#contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+              Unlock Your Child’s Career Blueprint <ArrowRight className="w-4 h-4" />
+            </a>
+            <div className="mt-2 flex items-center justify-center md:justify-end gap-1.5 text-xs text-white/60">
+              <Sparkles className="w-3 h-3 text-gold" /> Limited early-bird slots available for this academic term.
             </div>
           </div>
         </div>
@@ -585,52 +636,30 @@ function FAQ({ isVisible }: { isVisible: boolean }) {
 }
 
 function Scholarships({ isVisible }: { isVisible: boolean }) {
-  const highlights = [
-    { icon: Wallet, title: "Central & State Schemes", desc: "Pre-matric, post-matric, merit-cum-means and minority scholarships — all in one verified portal." },
-    { icon: Trophy, title: "Merit & Need Based", desc: "From top-rankers to first-generation learners — funding pathways for every profile and every stream." },
-    { icon: BookOpen, title: "Apply with Confidence", desc: "We help you decode eligibility, deadlines and documentation so no deserving student is left behind." },
-  ];
   return (
     <section id="scholarships" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-background`}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
-          <div className="lg:col-span-5">
-            <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Scholarships for All</div>
-            <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">
-              Funding the <span className="italic text-gradient-gold">dreams</span> of every learner.
-            </h2>
-            <p className="mt-5 text-muted-foreground text-base sm:text-lg leading-relaxed">
-              Talent should never be limited by tuition. Explore India’s National Scholarship Portal — a single gateway to hundreds of central & state government scholarships for school, college and professional courses.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
-              <a
-                href="https://scholarships.gov.in/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
-              >
-                Explore Scholarships <ArrowRight className="w-4 h-4" />
-              </a>
-              <a href="#contact" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
-                Get Guidance
-              </a>
-            </div>
-            <p className="mt-4 text-xs text-muted-foreground">Opens scholarships.gov.in — Government of India National Scholarship Portal.</p>
-          </div>
-          <div className="lg:col-span-7 grid sm:grid-cols-1 gap-5">
-            {highlights.map(h => (
-              <div key={h.title} className="card-reveal flex items-start gap-4 sm:gap-5 bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow">
-                <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary shrink-0">
-                  <h.icon className="w-6 h-6 text-gold" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-primary">{h.title}</h3>
-                  <p className="mt-2 text-muted-foreground leading-relaxed">{h.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
+        <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">Scholarships for All</div>
+        <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">
+          Funding the <span className="italic text-gradient-gold">dreams</span> of every learner.
+        </h2>
+        <p className="mt-5 text-muted-foreground text-base sm:text-lg leading-relaxed">
+          Talent should never be limited by tuition. Explore India’s National Scholarship Portal — a single gateway to hundreds of central & state government scholarships for school, college and professional courses.
+        </p>
+        <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3">
+          <a
+            href="https://scholarships.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
+          >
+            Explore Scholarships <ArrowRight className="w-4 h-4" />
+          </a>
+          <a href="#contact" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
+            Get Guidance
+          </a>
         </div>
+        <p className="mt-4 text-xs text-muted-foreground">Opens scholarships.gov.in — Government of India National Scholarship Portal.</p>
       </div>
     </section>
   );
@@ -703,18 +732,66 @@ function About({ isVisible }: { isVisible: boolean }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-3xl">
           <div className="text-sm font-semibold text-gold-deep uppercase tracking-wider">About</div>
-          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">Meet your lead counselor &amp; expert team.</h2>
-          <p className="mt-4 text-base sm:text-lg text-muted-foreground">A personalized roadmap, driven by domain specialists.</p>
+          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-primary leading-tight">Meet your lead counselor.</h2>
+          <p className="mt-4 text-base sm:text-lg text-muted-foreground">Science-backed guidance, human-centered mentorship, and a roadmap built around your child.</p>
         </div>
 
-        <div className="mt-10 md:mt-16 max-w-3xl">
-          <div className="card-reveal bg-surface border border-border rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-10 shadow-card">
+        <div className="card-reveal mt-10 md:mt-16 bg-surface border border-border rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-10 shadow-card">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+            <img
+              src={counselorImg}
+              alt="Rupali S. Rathore"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-gold/40 shrink-0"
+            />
             <div>
-              <h3 className="text-2xl font-display font-semibold text-primary">Rupali Rathore</h3>
-              <div className="text-sm font-medium text-gold-deep mt-1">Lead Career Counselor &amp; Founder</div>
-              <blockquote className="mt-6 text-sm sm:text-base text-foreground/85 leading-relaxed border-l-2 border-gold pl-4 sm:pl-5 italic">
-                “Every student deserves more than just a template for their future they deserve a personalized, strategic compass. My mission is to deeply understand your unique strengths, reduce the overwhelming anxiety of admissions, and match you with the precise industry veterans who can unlock your dream career. I specialize in navigating the complex web of OCI, NRI, and CIWG admissions, helping global Indian families secure seats in India's top colleges, central universities, and state-level institutions by leveraging government-mandated quotas and specialized entry pathways. We don’t just look at grades; we craft trajectories with empathy, clarity, and measurable results.”
-              </blockquote>
+              <h3 className="text-xl sm:text-2xl font-display font-semibold text-primary">Rupali S. Rathore</h3>
+              <div className="text-sm font-medium text-gold-deep mt-1">Founder &amp; Lead Career Counselor</div>
+              <div className="text-sm text-muted-foreground mt-0.5">Certified Global Career Counselor (UCLA Extension)</div>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
+                  <Landmark className="w-3.5 h-3.5" /> Govt. of India Regd. MSME
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-accent text-gold-deep px-3 py-1 text-xs font-semibold">
+                  <BadgeCheck className="w-3.5 h-3.5" /> UCLA Certified
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border text-muted-foreground px-3 py-1 text-xs font-semibold">
+                  7+ Yrs &middot; 500+ Families &middot; 3+ Countries
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <blockquote className="mt-6 text-base sm:text-lg text-primary leading-relaxed border-l-2 border-gold pl-4 sm:pl-5 italic">
+            <Quote className="w-5 h-5 text-gold mb-1" />
+            “Every student deserves more than a standard template for their future — they deserve a personalized, strategic compass.”
+          </blockquote>
+
+          <div className="mt-6 grid sm:grid-cols-2 gap-5 sm:gap-8 text-sm sm:text-base text-foreground/85 leading-relaxed">
+            <p>
+              With over 7+ years of hands-on educational experience across top schools in Pune, I blend scientific precision, strategic insight, and deep empathy into every counselling session.
+            </p>
+            <p>
+              As founder of <span className="font-semibold text-primary">Career Craft Youth</span>, my mission is to remove guesswork from academic planning — from stream discovery for Class 8–10 to complex quota admissions for global families. Our certified team also supports study abroad, internships, and school associations.
+            </p>
+          </div>
+
+          <div className="mt-8 grid sm:grid-cols-2 gap-5">
+            <div className="rounded-xl border border-border bg-card p-5">
+              <div className="text-xs font-semibold uppercase tracking-wider text-gold-deep">Core Expertise</div>
+              <ul className="mt-3 space-y-2 text-sm text-foreground/85">
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> OCI, NRI &amp; CIWG Indian University Admissions</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> Psychometric-Based Career &amp; Stream Profiling</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> Stress-Free, Family-Centric Mentorship</li>
+              </ul>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-5">
+              <div className="text-xs font-semibold uppercase tracking-wider text-gold-deep">Credentials</div>
+              <ul className="mt-3 space-y-2 text-sm text-foreground/85">
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> Global Career Counselling Certification — UCLA Extension</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> Bachelor of Science (B.Sc.)</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> PG Diploma in Programming — NIIT, Pune</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> PG Diploma in Sports Science &amp; Nutrition — SNDT University, Pune</li>
+              </ul>
             </div>
           </div>
         </div>

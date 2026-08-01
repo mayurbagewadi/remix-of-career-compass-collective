@@ -17,6 +17,7 @@ import type { LandingPhoto } from "@/lib/landing-photos";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Testimonial } from "@/lib/testimonials";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import FallingShapes from "@/components/FallingShapes";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -1065,7 +1066,8 @@ function Contact({ isVisible, socialLinks }: { isVisible: boolean; socialLinks: 
   return (
     <section id="contact" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-hero-gradient text-white relative overflow-hidden`}>
       <div className="absolute -left-32 -bottom-32 w-96 h-96 bg-gold-gradient opacity-10 blur-3xl rounded-full" />
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 grid lg:grid-cols-2 gap-10 md:gap-14">
+      <FallingShapes count={7} height="100%" colors={["#D9B054", "#C99A3E", "#FFFFFF"]} className="absolute inset-0 z-0" />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 grid lg:grid-cols-2 gap-10 md:gap-14 pointer-events-none">
         <div>
           <div className="text-sm font-semibold text-gold uppercase tracking-wider">Get in Touch</div>
           <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-display font-semibold leading-tight">Let’s craft your trajectory.</h2>
@@ -1075,7 +1077,7 @@ function Contact({ isVisible, socialLinks }: { isVisible: boolean; socialLinks: 
             <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /><span>career.craftyouth@gmail.com</span></div>
             <div className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /><span>India · Serving Global Indians worldwide</span></div>
           </div>
-          <div className="mt-8 flex items-center gap-3">
+          <div className="mt-8 flex items-center gap-3 pointer-events-auto">
             <a href={socialLinks.facebook} aria-label="Facebook" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Facebook className="w-4 h-4" /></a>
             <a href={socialLinks.instagram} aria-label="Instagram" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Instagram className="w-4 h-4" /></a>
             <a href={socialLinks.linkedin} aria-label="LinkedIn" className="w-10 h-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"><Linkedin className="w-4 h-4" /></a>
@@ -1085,7 +1087,7 @@ function Contact({ isVisible, socialLinks }: { isVisible: boolean; socialLinks: 
         <form
           id="discovery-form"
           onSubmit={handleSubmit}
-          className="card-reveal bg-white text-foreground rounded-2xl p-5 sm:p-6 md:p-10 shadow-elegant"
+          className="card-reveal bg-white text-foreground rounded-2xl p-5 sm:p-6 md:p-10 shadow-elegant pointer-events-auto"
         >
           {submitted ? (
             <div className="text-center py-10">

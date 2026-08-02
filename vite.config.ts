@@ -12,4 +12,11 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Force-enable nitro with the node-server preset so `npm run build` emits a real
+  // runnable Node HTTP server (dist/server/index.mjs) for our VPS deploy, instead of
+  // the bare Web-standard fetch handler nitro produces when skipped outside Lovable's cloud.
+  nitro: {
+    preset: "node-server",
+    output: { dir: "dist", serverDir: "dist/server", publicDir: "dist/client" },
+  },
 });

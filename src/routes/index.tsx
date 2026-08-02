@@ -3,9 +3,9 @@ import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import {
   Compass, Globe2, GraduationCap, Plane, Brain, Users, Award,
   Facebook, Instagram, Linkedin, Menu, X, ArrowRight, CheckCircle2,
-  Scale, Briefcase, Palette, Stethoscope, Cog, Sparkles,
+  Sparkles,
   Phone, Mail, MapPin, BookOpen, Wallet, Trophy, Landmark, BadgeCheck,
-  FileText, Lightbulb, ClipboardCheck, Quote, Star, ChevronRight,
+  Lightbulb, Quote, Star, ChevronRight,
   Shuffle, Atom, Puzzle, Eye, Ear, PenLine, Move,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
@@ -362,23 +362,6 @@ function Services({ isVisible }: { isVisible: boolean }) {
           </DialogContent>
         </Dialog>
 
-        <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          {[
-            { icon: Cog, label: "Engineering" },
-            { icon: Stethoscope, label: "Medical" },
-            { icon: Briefcase, label: "BBA / MBA" },
-            { icon: Scale, label: "Law" },
-            { icon: Palette, label: "Design" },
-            { icon: Plane, label: "Study Abroad" },
-            { icon: Globe2, label: "OCI / NRI" },
-            { icon: Brain, label: "Psychometrics" },
-          ].map(p => (
-            <div key={p.label} className="flex items-center gap-3 bg-white border border-border rounded-lg px-4 py-3 min-h-12">
-              <p.icon className="w-4 h-4 text-gold-deep" />
-              <span className="text-sm font-medium text-foreground/85">{p.label}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
@@ -774,47 +757,16 @@ function Scholarships({ isVisible }: { isVisible: boolean }) {
           Talent should never be limited by tuition. Explore India’s National Scholarship Portal — a single gateway to hundreds of central & state government scholarships for school, college and professional courses.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3">
-          <a
-            href="https://scholarships.gov.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform"
-          >
-            Explore Scholarships <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-          </a>
           <a href="#contact" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md font-semibold border border-primary/20 text-primary hover:bg-secondary transition">
             Get Guidance
           </a>
         </div>
-        <p className="mt-4 text-xs text-muted-foreground">Opens scholarships.gov.in — Government of India National Scholarship Portal.</p>
       </div>
     </section>
   );
 }
 
 function Internships({ isVisible }: { isVisible: boolean }) {
-  const cards = [
-    {
-      icon: FileText,
-      title: "Research Paper Guidance",
-      desc: "End-to-end mentorship for publishing in reputed journals — topic selection, methodology, drafting, and peer-review navigation.",
-    },
-    {
-      icon: Lightbulb,
-      title: "Internship Placements",
-      desc: "Curated internship opportunities across STEM, management, and design — with resume reviews and interview prep.",
-    },
-    {
-      icon: ClipboardCheck,
-      title: "Project & Portfolio Building",
-      desc: "Structured support for capstone projects, startup pitches, and standout college application portfolios.",
-    },
-    {
-      icon: Award,
-      title: "Competition & Grant Prep",
-      desc: "Guidance for science fairs, hackathons, innovation challenges, and research grants that boost admission profiles.",
-    },
-  ];
   return (
     <section id="internships" className={`section-pop ${isVisible ? "is-visible" : ""} py-16 sm:py-20 md:py-32 bg-surface`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -826,19 +778,6 @@ function Internships({ isVisible }: { isVisible: boolean }) {
           <p className="mt-4 text-base sm:text-lg text-muted-foreground">
             Stand out in admissions with real-world experience. We help students secure internships, publish research, and craft portfolios that colleges actually notice.
           </p>
-        </div>
-        <div className="mt-10 md:mt-14 grid md:grid-cols-2 gap-5 md:gap-6">
-          {cards.map((c, i) => (
-            <div key={c.title} className={`card-reveal group flex items-start gap-4 sm:gap-5 bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-7 shadow-card hover:shadow-elegant transition-shadow ${i % 2 === 1 ? "delay-100" : ""}`}>
-              <div className="grid place-items-center w-12 h-12 rounded-xl bg-primary shrink-0 transition-transform duration-300 group-hover:scale-110">
-                <c.icon className="w-6 h-6 text-gold" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-primary">{c.title}</h3>
-                <p className="mt-2 text-muted-foreground leading-relaxed">{c.desc}</p>
-              </div>
-            </div>
-          ))}
         </div>
         <div className="mt-10 md:mt-12 flex flex-col sm:flex-row sm:flex-wrap gap-3">
           <a href="#contact" className="group inline-flex items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
@@ -895,7 +834,7 @@ function About({ isVisible }: { isVisible: boolean }) {
 
           <div className="mt-6 grid sm:grid-cols-2 gap-5 sm:gap-8 text-sm sm:text-base text-foreground/85 leading-relaxed">
             <p>
-              With over 7+ years of hands-on educational experience across top schools in Pune, I blend scientific precision, strategic insight, and deep empathy into every counselling session.
+              With 7+ years of hands-on experience supporting experiential math learning in top Pune schools, I blend strong academic foundations with data-backed guidance as a dedicated career counsellor.
             </p>
             <p>
               As founder of <span className="font-semibold text-primary">Career Craft Youth</span>, my mission is to remove guesswork from academic planning — from stream discovery for Class 8–10 to complex quota admissions for global families. Our certified team also supports study abroad, internships, and school associations.

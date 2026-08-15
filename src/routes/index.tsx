@@ -460,7 +460,7 @@ function Discovery({ isVisible }: { isVisible: boolean }) {
             </div>
           </div>
           <div className="text-center md:text-right shrink-0">
-            <a href="#contact" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
+            <a href="/start-test" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-gold-gradient text-gold-foreground px-6 py-3.5 rounded-md font-semibold shadow-gold hover:scale-[1.02] transition-transform">
               Unlock Your Child’s Career Blueprint <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
             <div className="mt-2 flex items-center justify-center md:justify-end gap-1.5 text-xs text-white/60">

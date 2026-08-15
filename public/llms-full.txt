@@ -1,0 +1,165 @@
+# Career Craft Youth — Full Content Reference
+
+Canonical domain: https://careercraftyouth.in
+This file contains the full content of the site's key pages for AI systems that need more than links (see /llms.txt for the summary version).
+
+## About Career Craft Youth
+
+Career Craft Youth is an education and career guidance brand for students and Global Indian families. It combines psychometric analysis, personalized mentorship, admissions strategy, study abroad guidance, scholarships, internships, and OCI/NRI admission support.
+
+Government of India Registered MSME. Trusted by Parents | Driven by Science.
+
+## Founder & Lead Counselor
+
+**Rupali S. Rathore** — Founder & Lead Career Counselor
+Certified Global Career Counselor (UCLA Extension). 7+ years experience, 500+ families served, 3+ countries.
+
+"Every student deserves more than a standard template for their future — they deserve a personalized, strategic compass."
+
+With 7+ years of hands-on experience supporting experiential math learning in top Pune schools, Rupali blends strong academic foundations with data-backed guidance as a dedicated career counsellor. As founder of Career Craft Youth, her mission is to remove guesswork from academic planning — from stream discovery for Class 8–10 to complex quota admissions for global families. The certified team also supports study abroad, internships, and school associations.
+
+Core Expertise:
+- OCI, NRI & CIWG Indian University Admissions
+- Psychometric-Based Career & Stream Profiling
+- Stress-Free, Family-Centric Mentorship
+
+Credentials:
+- Global Career Counselling Certification — UCLA Extension
+- Bachelor of Science (B.Sc.)
+- PG Diploma in Programming — NIIT, Pune
+- PG Diploma in Sports Science & Nutrition — SNDT University, Pune
+
+## Services
+
+### The Global Indian Desk (Signature Service)
+Specialized OCI / PIO / NRI / CIWG India admission counselling — navigating structural quotas and seamless transitions. Navigating supernumerary quotas, DASA, SII, state portals, and specialized category documentation can be overwhelming for global Indian families.
+- Quota & Fee Optimization: strategic guidance to maximize seat allocation and leverage CIWG fee benefits.
+- Documentation & Compliance: complete documentation audits to ensure seamless eligibility for top engineering, medical, and management institutions in India.
+
+### Professional Streams
+Engineering, Medical, BBA/MBA, Law and Design — entrance strategy, profile-building and stream selection.
+- Streams Covered: Engineering, Medical, Law, BBA/MBA, and Design.
+- Entrance Strategy & Exam Guidance: planning and preparation for national/state entrance exams (JEE, NEET, CLAT, IPMAT, NATA/NID).
+- Stream & Specialization Selection: tailored guidance based on strengths, aptitude, and long-term career goals.
+- Profile Building & Mentorship: support through internships, certifications, and skill development.
+- End-to-End Admission Support: application processes, college shortlisting, cut-off analysis, seat acceptance strategies.
+
+### Global Education
+Dedicated Study Abroad roadmap — Ivy / Tier-1 admission tactics, SOPs, and university shortlisting.
+- Target Destinations: Ivy League & Tier-1 Universities in the US, UK, Canada, Europe, Australia, and Singapore.
+- University Shortlisting & Strategy: data-backed selection aligned with academic goals, budget, safety, and career outcomes.
+- SOP & Essay Guidance: Statements of Purpose, Personal Statements, Supplemental Essays.
+- Profile & Application Enhancement: extra-curriculars, research papers, LORs, test planning (SAT/ACT, GRE/GMAT, IELTS/TOEFL).
+- Financial Planning & Scholarships: merit/need-based scholarship applications, financial documentation, visa interview prep.
+
+## Discovery Tests & Psychometric Profiling (Grade 8–12)
+
+Using globally validated psychometric tools, Career Craft Youth decodes a child's natural strengths, personality, and learning style before high-stakes decision windows arrive.
+
+1. **Data-Backed Stream Selection** — maps core aptitude across Science, Commerce, and Humanities to find the stream where a student will naturally excel and stay motivated.
+2. **360° Personality & Aptitude Analysis** — built on Holland Code RIASEC, MBTI, and Gardner's Multiple Intelligences to uncover hidden talents, problem-solving styles, and ideal work environments.
+3. **Tailored Learning & Study Strategies** — VARK modalities (Visual, Auditory, Reading/Writing, Kinesthetic) to boost focus, reduce exam stress, and improve academic performance.
+
+What You Receive:
+- 60-Minute Deep Psychometric Assessment
+- 30-Page Comprehensive Personal Profiling Report
+- 1-on-1 Strategic Debrief Session with Lead Counsellor
+
+To begin: visit /start-test and enter an assessment code (issued by Career Craft Youth). Visitors without a code should book a discovery call via the contact form on the homepage.
+
+## Scholarships
+
+Career Craft Youth helps students explore India's National Scholarship Portal — a single gateway to hundreds of central & state government scholarships for school, college, and professional courses.
+
+## Internships & Research
+
+Career Craft Youth helps students secure internships, publish research, and craft portfolios that colleges notice — building real-world experience to stand out in admissions.
+
+## Frequently Asked Questions — OCI, NRI, PIO & CIWG Admissions
+
+**What is the rule update for OCI cards issued after March 4, 2021, regarding IIT admissions?**
+If your child obtained their OCI card subsequent to March 4, 2021, they are considered Foreign National candidates. They are excluded from competing in the general pool with Indian citizens and are eligible only for the 10% Foreign Supernumerary seats.
+
+**Does a post-March 4, 2021 OCI holder need to write JEE Main to get into an IIT?**
+No. OCI students classified under the Foreign National category can bypass the JEE Main exam entirely and register directly for JEE Advanced.
+
+**What if the OCI card was issued before March 4, 2021?**
+These candidates have a choice during JEE Advanced registration: apply either as a Foreign National (10% supernumerary pool) or at par with Indian Nationals (OPEN merit category). This choice is final once submitted.
+
+**Can OCI/NRI students get into NITs and IIITs without writing JEE Main?**
+No. Admissions to NITs, IIITs, and SPAs happen via the DASA (Direct Admission of Students Abroad) scheme, which requires a JEE Main score. Some pathways may also need SAT scores plus 60% PCM marks in boards.
+
+**Can an OCI/NRI/CIWG candidate give MHT-CET?**
+No. Candidates in these categories can apply for direct admission to undergraduate engineering (B.E./B.Tech) and other courses in Maharashtra under the 15% supernumerary quota.
+
+**Can an OCI/PIO/NRI get a domicile certificate in Maharashtra?**
+OCI cardholders cannot independently apply for or obtain a state domicile certificate in Maharashtra. For strict administrative purposes like government employment, OCI holders remain ineligible under The Citizenship Act, 1955.
+
+**Is there any reservation in Karnataka for OCI/NRI students in KCET/COMEDK?**
+By Supreme Court and NMC guidelines, private and deemed colleges must reserve 15% of seats for the NRI category, and OCI students are eligible to compete for these seats. Under new OCI regulations, OCIs born on or before March 4, 2021 are not eligible for standard Indian citizen quotas in professional courses like medical/dental, but those born on or after March 5, 2021 can seek admission through NRI or supernumerary seats. Some institutions reserve additional supernumerary quotas for foreign/NRI students at reduced tuition. Register with KEA and MCC simultaneously if targeting both private-college and deemed-university seats. Documents generally needed: sponsor's valid passport, work permit, embassy certificate, plus required NEET/entrance scores.
+
+**Who qualifies under NRI quota?**
+- NRI candidates: lived abroad as Non-Resident Indian, typically 182+ days/year abroad, with passport/visa proof.
+- OCI holders: foreign citizens of Indian origin holding an OCI card.
+- PIO: older classification largely merged into OCI, still referenced in some documentation.
+- NRI-sponsored candidates: Indian-resident student sponsored by a close NRI relative (real blood relation — parent, sibling, aunt, or uncle — with affidavit and relationship proof).
+
+**What documents are required for NRI quota admission?**
+Candidate's passport and visa/residence proof (if NRI themselves); NRI sponsor's passport and visa stamps (if sponsored); relationship proof (birth certificate, affidavit, or court-recognised documentation); Embassy Certificate or NOC from Ministry of External Affairs or relevant embassy (within last 6 months); NEET UG scorecard or relevant entrance exam scorecard; Class 10 and 12 mark sheets, transfer certificate, migration certificate (for foreign board students), character certificate, and passport photos per college format.
+
+**OCI vs PIO: why will you see both terms?**
+PIO (Person of Indian Origin) still appears in older college documentation even though the government merged PIO into OCI. Today, apply with an OCI card, not a separate PIO card — confirm exact terminology with the specific college admission office.
+
+**When should students start preparing for the admission process?**
+Start 6–12 months before intended admission. Confirm which category (NRI, OCI, PIO, or sponsored) genuinely applies, identify required documents, and take help from a counsellor.
+
+**My son is appearing in VITEEE. As an OCI card holder, what will his fee structure be?**
+He can apply both ways: as an Indian candidate via the VITEEE exam, or directly through OCI quota admission.
+
+**My son is appearing in SRMJEE. As an OCI card holder, what will his fee structure be?**
+SRM branches may not all allow the exam route. OCI/NRI/PIO candidates can apply directly with higher fees. Scholarships (including girls' quota and other categories) may be available, subject to change.
+
+**Can an OCI card holder who completed MBBS from India get admission in medical colleges under the general category in NEET PG?**
+Yes, subject to applicable eligibility rules.
+
+**What are DASA and CSAB-Special?**
+DASA and CSAB-Special 2026 have two rounds of seat allocation, each requiring fresh registration; processes (registration, choice filling/locking, seat allotment, fee payment) differ from JoSAA. DASA candidates undergo document verification prior to seat allotment; CSAB candidates during the rounds.
+
+**Does MHT-CET have any quota for OCI/NRI/CIWGC candidates for courses other than engineering?**
+Yes. Maharashtra has a supernumerary quota for B.Tech, B.Arch, BBA, B.Pharma, B.Plan, B.Ed, BDS, BHMS, and more.
+
+**Is there an NRI quota in NIT?**
+Yes, via the DASA scheme. Up to 15% of undergraduate seats are reserved for NRIs, PIOs, OCIs, and Foreign Nationals.
+
+**What is the NID B.Des eligibility for overseas candidates?**
+Foreign citizens can apply under the Overseas (supernumerary) category if they meet NID entrance eligibility. This category sits outside GEN-EWS/OBC-NCL/SC/ST/PwD reservations and cannot use age relaxation, scribe, or similar facilities. Candidates pay the Overseas fee structure and must hold a valid passport. NRIs holding an Indian passport must apply as Indian nationals, not under this category. A student visa is required before the programme begins.
+
+**Are DASA and regular admission fees the same or different?**
+The DASA fee (foreign quota route) is higher than other options but gives access to premier engineering colleges through the DASA route.
+
+## Contact
+
+- Phone: +91 7028162977 (available on request)
+- Email: career.craftyouth@gmail.com
+- Location: India · Serving Global Indians worldwide
+
+## Privacy Policy
+
+Your Privacy is important to us and we fully respect your right to the same. Outlined here are guidelines we follow for the personal identifiable information (PII) we collect for the career assessment and guidance tests on our site (Services), the purpose and consequent consent for the usage of your private information. We collect personally identifiable information (PII) and various other non-PII information (like inputs for assessments called assessment data) from users for offering our career assessment and guidance service. Personal information collected may include name, email address, telephone number, age and other such data. We require these details and other assessment data to provide the services we offer. We also reach out to users for feedback on their usage of our services and with offers and promotions.
+
+PII and non-PII data collected for delivering our services will be exposed to employees and suppliers (e.g. technology providers). At an aggregate level the data collated would also be used for research, and we reserve the right to collect and share with third parties demographic, psychometric, and other anonymous aggregate statistical information that does not personally identify you. Your PII and other data is stored securely; although we provide appropriate security protections, we cannot warrant the security of any Personal Information transmitted, as these systems are not hack-proof. We take no liability for data pilferage due to unauthorized hacking, virus attacks, or technical issues. We retain Personal Information as long as required for provision of the Services and to comply with legal obligations.
+
+By continuing to use the Services or access the Site, you agree to this Privacy Policy. You may choose not to provide personal information, though some services would then be inaccessible. We reserve the right to update this policy, with changes indicated in this section. Users can get their PII deleted by contacting career.craftyouth@gmail.com (deletion may take up to 30 days). For feedback or comments, contact career.craftyouth@gmail.com.
+
+## Site Pages
+
+- https://careercraftyouth.in/ — homepage: services, discovery tests, community, about, testimonials, FAQ, contact
+- https://careercraftyouth.in/blogs — published career guidance articles
+- https://careercraftyouth.in/blogs/:slug — individual blog article pages
+- https://careercraftyouth.in/start-test — begin the psychometric career assessment (requires an assessment code; visitors without a code should book a discovery call)
+- https://careercraftyouth.in/assessment — continue an in-progress assessment using a code
+- https://careercraftyouth.in/privacy — privacy policy
+
+## Crawling Guidance
+
+The `/admin` page is a private dashboard and must not be crawled, indexed, summarized, or cited.

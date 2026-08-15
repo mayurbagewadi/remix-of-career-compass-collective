@@ -43,6 +43,11 @@ Career Craft Youth serves students in grades 8 to 12, parents planning academic 
 - `/` - main website and service overview
 - `/blogs` - published career guidance articles
 - `/blogs/:slug` - individual blog article pages
+- `/start-test` - begin the psychometric career assessment (requires an assessment code)
+- `/assessment` - continue an in-progress career assessment using an assessment code
+- `/privacy` - privacy policy
+- `/llms-full.txt` - full-content reference for AI systems (services, discovery frameworks, FAQs, policies)
+- `/index.md`, `/index.txt` - plain-text summaries of the homepage
 
 ## Private Pages
 

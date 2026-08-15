@@ -9,38 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StartTestRouteImport } from './routes/start-test'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as BlogsRouteImport } from './routes/blogs'
-import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogsSlugRouteImport } from './routes/blogs.$slug'
 
-const StartTestRoute = StartTestRouteImport.update({
-  id: '/start-test',
-  path: '/start-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BlogsRoute = BlogsRouteImport.update({
   id: '/blogs',
   path: '/blogs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AssessmentRoute = AssessmentRouteImport.update({
-  id: '/assessment',
-  path: '/assessment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -62,86 +44,42 @@ const BlogsSlugRoute = BlogsSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/assessment': typeof AssessmentRoute
   '/blogs': typeof BlogsRouteWithChildren
-  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/start-test': typeof StartTestRoute
   '/blogs/$slug': typeof BlogsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/assessment': typeof AssessmentRoute
   '/blogs': typeof BlogsRouteWithChildren
-  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/start-test': typeof StartTestRoute
   '/blogs/$slug': typeof BlogsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/assessment': typeof AssessmentRoute
   '/blogs': typeof BlogsRouteWithChildren
-  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/start-test': typeof StartTestRoute
   '/blogs/$slug': typeof BlogsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/admin'
-    | '/assessment'
-    | '/blogs'
-    | '/privacy'
-    | '/sitemap.xml'
-    | '/start-test'
-    | '/blogs/$slug'
+  fullPaths: '/' | '/admin' | '/blogs' | '/sitemap.xml' | '/blogs/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/admin'
-    | '/assessment'
-    | '/blogs'
-    | '/privacy'
-    | '/sitemap.xml'
-    | '/start-test'
-    | '/blogs/$slug'
-  id:
-    | '__root__'
-    | '/'
-    | '/admin'
-    | '/assessment'
-    | '/blogs'
-    | '/privacy'
-    | '/sitemap.xml'
-    | '/start-test'
-    | '/blogs/$slug'
+  to: '/' | '/admin' | '/blogs' | '/sitemap.xml' | '/blogs/$slug'
+  id: '__root__' | '/' | '/admin' | '/blogs' | '/sitemap.xml' | '/blogs/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
-  AssessmentRoute: typeof AssessmentRoute
   BlogsRoute: typeof BlogsRouteWithChildren
-  PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  StartTestRoute: typeof StartTestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/start-test': {
-      id: '/start-test'
-      path: '/start-test'
-      fullPath: '/start-test'
-      preLoaderRoute: typeof StartTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -149,25 +87,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/blogs': {
       id: '/blogs'
       path: '/blogs'
       fullPath: '/blogs'
       preLoaderRoute: typeof BlogsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/assessment': {
-      id: '/assessment'
-      path: '/assessment'
-      fullPath: '/assessment'
-      preLoaderRoute: typeof AssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -207,11 +131,8 @@ const BlogsRouteWithChildren = BlogsRoute._addFileChildren(BlogsRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
-  AssessmentRoute: AssessmentRoute,
   BlogsRoute: BlogsRouteWithChildren,
-  PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  StartTestRoute: StartTestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

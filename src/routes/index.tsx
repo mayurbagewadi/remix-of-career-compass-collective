@@ -36,6 +36,20 @@ export const Route = createFileRoute("/")({
         children:
           "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-2J84HVW2Z4');",
       },
+      // Google tag (gtag.js) - Google Ads AW-18486112867
+      {
+        async: true,
+        src: "https://www.googletagmanager.com/gtag/js?id=AW-18486112867",
+      },
+      {
+        children:
+          "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'AW-18486112867');",
+      },
+      // Event snippet for Page view conversion page
+      {
+        children:
+          "gtag('event', 'conversion', {\n  'send_to': 'AW-18486112867/a5yvCKmrnqsdEOPk7u5E',\n  'value': 1.0,\n  'currency': 'INR'\n});",
+      },
     ],
   }),
   component: Index,
